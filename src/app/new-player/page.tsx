@@ -1,4 +1,3 @@
-"use server"
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -7,8 +6,7 @@ import { ChevronLeft } from "lucide-react"
 import NewPlayerForm from "./components/newPlayerForm";
 
 export default async function Page() {
-  "use server"
-  
+
   return (
     <div className=" h-screen w-screen p-4 bg-gray-100 flex flex-col items-center">
       <div className="flex justify-between w-full flex-wrap">

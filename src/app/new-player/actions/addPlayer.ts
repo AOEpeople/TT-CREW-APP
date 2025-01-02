@@ -1,12 +1,11 @@
 "use server";
 
-import "dotenv/config";
+import { db } from "@/db";
 import * as Sentry from "@sentry/nextjs";
 
 import * as schema from "@/db/schema";
 import * as z from "zod";
 import { redirect } from "next/navigation";
-import { getConnectedDBClient } from "@/db/TableTennisDrizzleClient";
 import { formDataToObject } from "@/lib/formDataToObject";
 import { headers } from "next/headers";
 
@@ -26,7 +25,6 @@ export default async function addPlayer(formData: FormData) {
     async () => {
       const { name, emoji } = inputSchema.parse(formDataToObject(formData));
 
-      const db = await getConnectedDBClient();
 
       const players = await db.query.players.findMany();
 

@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "sst bind next build",
-    "db:push": "sst bind drizzle-kit push:pg --config=drizzle.config.ts",
-    "db:studio": "sst bind drizzle-kit studio",
-    "dev": "sst bind next dev",
+    "build": "next build",
+    "db:generate": "sst shell drizzle-kit generate",
+    "db:migrate": "sst shell drizzle-kit migrate",
+    "db:push": "sst shell drizzle-kit push",
+    "db:studio": "sst shell drizzle-kit studio",
+    "postgres:docker": "docker run --rm -p 5432:5432 -v $(pwd)/.sst/storage/postgres:/var/lib/postgresql/data -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=local   postgres:16.4",
+    "dev": " next dev",
     "lint": "next lint",
-    "start": "sst bind next start"
+    "start": "next start"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.0",
@@ -18,7 +21,6 @@
     "@sentry/nextjs": "^8.18.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.38.1",
     "drizzle-zod": "^0.6.0",
     "emoji-picker-react": "^4.11.1",
@@ -26,10 +28,10 @@
     "next": "14.2.5",
     "next-themes": "^0.3.0",
     "pg": "^8.12.0",
+    "prettier": "^3.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sonner": "^1.5.0",
-    "sst": "3.4.1",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
@@ -46,8 +48,9 @@
     "eslint": "^9.7.0",
     "eslint-config-next": "14.2.5",
     "postcss": "^8.4.39",
-    "sst": "^3.4.1",
+    "sst": "3.4.49",
     "tailwindcss": "^3.4.4",
+    "tsx": "^4.19.2",
     "typescript": "^5.5.3"
   }
 }

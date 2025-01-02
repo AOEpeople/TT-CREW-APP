@@ -1,36 +1,11 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AOE TT Crew App
 
-## Getting Started
+This is the offizial Repository containing the AOE Tabletennis App. For further info on the "Tischtennis Crew" see here: [link](https://extranet.aoe.com/confluence/pages/viewpage.action?spaceKey=aoeculture&title=Tischtennis+Crew@AOE)
 
-First, run the development server:
+## Contributing
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Everyone is welcome to contribute new Features or Bug fixes. You can also create Issues [here](https://github.com/AOEpeople/TT-CREW-APP/issues/new)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Get started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project uses [SST](https://sst.dev/) to manage the Infrastructure. To develop on this app you will eventually need AWS User credentials. If you're part of AOE, just ask one of the maintainers to get a token, if not you can follow [the SST Guide](https://sst.dev/docs/aws-accounts) to create your own Account.

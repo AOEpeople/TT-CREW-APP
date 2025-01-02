@@ -2,10 +2,11 @@
 import * as Sentry from "@sentry/nextjs";
 import * as schema from "@/db/schema";
 import * as z from "zod";
-import { getConnectedDBClient } from "@/db/TableTennisDrizzleClient";
+
 import { formDataToObject } from "@/lib/formDataToObject";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { db } from "@/db";
 
 const inputSchema = z.object({
   winnerId1: z.coerce.number({ required_error: "winnerId is required" }),
@@ -28,9 +29,6 @@ export default async function addMatch(formData: FormData) {
           formDataToObject(formData)
         );
 
-        // Create a connection to the database
-        const db = await getConnectedDBClient();
-        console.log("got DB Connection");
 
         // Insert the match and the playerMatches as a transaction to ensure consistency
         await db.transaction(async (tx) => {

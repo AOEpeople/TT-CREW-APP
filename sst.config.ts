@@ -3,26 +3,45 @@
 export default $config({
   app(input) {
     return {
-      name: "aoe-tabletennis-app",
+      name: "tt-crew-app",
       removal: input?.stage === "production" ? "retain" : "remove",
       protect: ["production"].includes(input?.stage),
-      home: "aws"
+      home: "aws",
     };
   },
   async run() {
-/**  const DATABASE = new Config.Secret(stack, "DATABASE");
-      const DB_HOST = new Config.Secret(stack, "DB_HOST");
-      const DB_USER = new Config.Secret(stack, "DB_USER");
-      const DB_PASSWORD = new Config.Secret(stack, "DB_PASSWORD");
-      const SENTRY_AUTH_TOKEN = new Config.Secret(stack, "SENTRY_AUTH_TOKEN");*/
-    const DATABASE = new sst.Secret("DATABASE");
-    const DB_HOST = new sst.Secret("DB_HOST");
-    const DB_USER = new sst.Secret("DB_USER");
-    const DB_PASSWORD = new sst.Secret("DB_PASSWORD");
     const SENTRY_AUTH_TOKEN = new sst.Secret("SENTRY_AUTH_TOKEN");
 
-    new sst.aws.Nextjs("MyWeb", {
-      link: [DATABASE, DB_HOST, DB_USER, DB_PASSWORD, SENTRY_AUTH_TOKEN],
+    const vpc = new sst.aws.Vpc("TT-VPC", {
+      bastion: true,
+      nat: "ec2",
+    });
+    const database = new sst.aws.Postgres("TT-Database", {
+      vpc,
+      proxy: true,
+      dev: {
+        username: "postgres",
+        password: "password",
+        database: "postgres",
+        host: "localhost",
+        port: 5432,
+      },
+    });
+
+    new sst.x.DevCommand("Studio", {
+      link: [database],
+      dev: {
+        command: "pnpm drizzle-kit studio",
+      },
+    });
+
+    new sst.aws.Nextjs("TT-Nextjs", {
+      link: [SENTRY_AUTH_TOKEN, database],
+      vpc,
+      domain:
+        $app.stage === "production"
+          ? "tt-crew.app"
+          : `${$app.stage}-preview.tt-crew.app`,
     });
   },
 });

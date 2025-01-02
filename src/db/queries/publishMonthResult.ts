@@ -1,13 +1,12 @@
 import * as schema from "@/db/schema";
-import { getConnectedDBClient } from "../TableTennisDrizzleClient";
 import { getMonthResult } from "./getMonthResult";
+import { db } from "..";
 
 export const publishMonthResult = async (date: Date) => {
   const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
   console.info(
     `Publishing month result for ${lastDayOfMonth.toLocaleDateString("de-DE")}`
   );
-  const db = await getConnectedDBClient();
 
   const doesMonthResultExist = await db.query.monthResult.findFirst({
     where: (monthResult, { eq }) => eq(monthResult.createdAt, lastDayOfMonth),

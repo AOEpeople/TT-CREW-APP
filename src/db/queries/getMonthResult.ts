@@ -2,12 +2,10 @@ export const dynamic = "force-dynamic";
 
 import * as schema from "@/db/schema";
 import { and, count, desc, eq, gt, lt } from "drizzle-orm";
-import { getConnectedDBClient } from "../TableTennisDrizzleClient";
+import { db } from "..";
 
 export const getMonthResult = async (date: Date) => {
   try {
-    // create the db connection
-    const db = await getConnectedDBClient();
 
     const firstDayOfThisMonth = new Date(
       date.getFullYear(),
