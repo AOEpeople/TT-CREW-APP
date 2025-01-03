@@ -1,11 +1,7 @@
 import { z } from "zod";
 
 const envVariables = z.object({
-    SENTRY_AUTH_TOKEN: z.string(),
-    DATABASE: z.string(),
-    DB_HOST: z.string(),
-    DB_PASSWORD: z.string(),
-    DB_USER: z.string(),
+  SENTRY_AUTH_TOKEN: z.string(),
 });
 
 const env = envVariables.parse(process.env);

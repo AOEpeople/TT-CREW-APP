@@ -7,10 +7,7 @@ export default defineConfig({
   out: "./drizzle",
 
   dbCredentials: {
-    ssl:
-      Resource.App.stage === "production"
-        ? { rejectUnauthorized: false }
-        : false,
+    ssl: "prefer",
     database: Resource["TT-Database"].database,
     host: Resource["TT-Database"].host,
     password: Resource["TT-Database"].password,
