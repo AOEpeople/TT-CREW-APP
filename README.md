@@ -45,4 +45,6 @@ This will generate all needed AWS Ressources and start the Next.js Server as wel
 
 4. `pnpm db:push`
 
-This will push the current Drizzle Migrations to the database. You only need to do this once initially, as well as when changes to the database schema are made. When migrating to a remote database, make sure that `sst dev` or `sst tunnel` is running, so that drizzle-kit can connect to the deployed vpc network.
+This will push the current Drizzle Migrations to the database. You only need to do this once initially, as well as when changes to the database schema are made.
+
+If you need to push migrations to a deployed stage, run `sst shell --stage your-stage` first, to connect to the actual environment and run the `pnpm db:push` command to connect to actual database instance.
