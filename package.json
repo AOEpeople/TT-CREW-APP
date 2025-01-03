@@ -26,7 +26,7 @@
     "drizzle-zod": "^0.6.0",
     "emoji-picker-react": "^4.11.1",
     "lucide-react": "^0.408.0",
-    "next": "14.2.5",
+    "next": "14.2.21",
     "next-themes": "^0.3.0",
     "pg": "^8.12.0",
     "prettier": "^3.4.2",
