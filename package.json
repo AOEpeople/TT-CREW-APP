@@ -43,7 +43,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
-    "aws-cdk-lib": "2.149.0",
+    "aws-cdk-lib": "2.177.0",
     "constructs": "10.3.0",
     "drizzle-kit": "^0.30.0",
     "eslint": "^9.7.0",
