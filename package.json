@@ -11,7 +11,7 @@
     "db:studio": "drizzle-kit studio",
     "postgres:docker": "docker run --rm -p 5432:5432 -v $(pwd)/.sst/storage/postgres:/var/lib/postgresql/data -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=local   postgres:16.4",
     "dev": " next dev --turbopack",
-    "lint": "sst shell next lint",
+    "lint": "sst shell 'pnpm run tsc && pnpm run eslint --fix .",
     "start": "next start"
   },
   "dependencies": {
@@ -38,6 +38,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
     "@next/eslint-plugin-next": "^15.1.6",
     "@types/node": "^22.13.0",
     "@types/react": "19.0.8",
@@ -47,11 +48,17 @@
     "drizzle-kit": "^0.30.4",
     "eslint": "^9.19.0",
     "eslint-config-next": "15.1.6",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-sonarjs": "^3.0.1",
+    "globals": "^15.14.0",
     "postcss": "^8.4.39",
     "sst": "3.4.49",
     "tailwindcss": "^3.4.4",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.23.0"
   },
   "resolutions": {
     "@types/react": "19.0.8",

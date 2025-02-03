@@ -20,7 +20,7 @@ type Player = {
 export default async function Game() {
 
   let players: Player[] | undefined = undefined;
-  let error = undefined;
+  const error = undefined;
   try {
     players = await db.query.players.findMany();
 
