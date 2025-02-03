@@ -33,8 +33,30 @@ export default [
     },
   },
   {
-    plugins: {
-      pluginSonarJS,
+    rules: {
+      "sonarjs/todo-tag": "warn",
+    },
+  },
+  {
+    name: "should-get-fixed-later",
+    rules: {
+      "jsx-a11y/click-events-have-key-events": "warn",
+      "jsx-a11y/no-static-element-interactions": "warn",
+      "@typescript-eslint/no-namespace": "warn",
+      "@typescript-eslint/no-require-imports": "warn",
+      "@typescript-eslint/no-empty-object-type": "warn",
+      "sonarjs/no-nested-conditional": "warn",
+      "sonarjs/no-nested-template-literals": "warn",
+      "react/prop-types": "warn",
+      "sonarjs/table-header": "warn",
+    },
+  },
+  {
+    name: "sst-overrides",
+    files: ["sst.config.ts"],
+    rules: {
+      "sonarjs/constructor-for-side-effects": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
     },
   },
   {

@@ -11,7 +11,7 @@
     "db:studio": "drizzle-kit studio",
     "postgres:docker": "docker run --rm -p 5432:5432 -v $(pwd)/.sst/storage/postgres:/var/lib/postgresql/data -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=local   postgres:16.4",
     "dev": " next dev --turbopack",
-    "lint": "sst shell 'pnpm run tsc && pnpm run eslint --fix .",
+    "lint": "sst shell -- pnpm tsc  && pnpm eslint --fix .",
     "start": "next start"
   },
   "dependencies": {

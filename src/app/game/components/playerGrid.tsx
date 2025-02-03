@@ -4,8 +4,6 @@ import addMatch from "../actions/addMatch";
 import { useEffect, useState } from "react";
 
 import PlayerTile from "./playerTile";
-import { ToastAction } from "@radix-ui/react-toast";
-import { useToast } from "@/components/ui/use-toast";
 import { ConfirmationModal } from "./confirmationModal";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -74,7 +72,7 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
     <div className="flex justify-center flex-col gap-3 p-3 ">
       <div className="flex gap-3 justify-end">
         Losers Cup
-        <Switch onClick={(e) => { setIsMultiSelection((isMultiSelection) => !isMultiSelection); setSelectedPlayers([]) }} />
+        <Switch onClick={() => { setIsMultiSelection((isMultiSelection) => !isMultiSelection); setSelectedPlayers([]) }} />
       </div>
       {isMultiSelection && <p>Wähle zwei Spieler aus, die gewonnen haben</p>}
       <Input
@@ -130,6 +128,7 @@ function getOfflinePlayers(): Player[] | undefined {
     if (!offlinePlayerJSON) return undefined;
     return JSON.parse(offlinePlayerJSON) as Player[];
   } catch (e) {
+    console.error("Error while reading offline players", e);
     return undefined;
   }
 }
@@ -177,7 +176,7 @@ function sendWinnerToDB(winner1: Player, winner2?: Player) {
             ? `Versuche Sieg einzutragen...`
             : `Dann probieren wir es halt noch ein ${i}tes mal den Sieg einzutragen...`,
         success: `Wuhu Cola und Forntnite für ${winner1.name}${winner1.emoji} ${winner2 ? " und " + winner2.name + winner2.emoji : ""}`,
-        error: (error) => {
+        error: () => {
           addPlayerAndToast(i + 1);
           return `Fehler beim ${i}ten Versuch, ${winner1.name}${winner1.emoji} einzutragen...`;
         },
@@ -195,7 +194,7 @@ const writePlayerMatchToLocalStorage = (player: Player) => {
     timestamp: new Date().toISOString(),
   };
   const playerMatches: OfflinePlayerMatch[] = JSON.parse(
-    localStorage.getItem("playerMatches") || "[]"
+    localStorage.getItem("playerMatches") ?? "[]"
   );
   playerMatches.push(playerMatch);
   localStorage.setItem("playerMatches", JSON.stringify(playerMatches));
