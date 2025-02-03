@@ -1,18 +1,16 @@
+import { drizzle } from "drizzle-orm/libsql";
 
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createClient } from "@libsql/client";
 
 import * as schema from "@/db/schema";
 import { Resource } from "sst";
 
+const client = createClient({
+  url: Resource["TURSO_DATABASE_URL"].value,
+  authToken: Resource["TURSO_AUTH_TOKEN"].value,
+});
 
 export const db = drizzle({
   schema,
-  connection: {
-    user: Resource["TT-Database"].username,
-    password: Resource["TT-Database"].password,
-    host: Resource["TT-Database"].host,
-    port: Resource["TT-Database"].port,
-    database: Resource["TT-Database"].database,
-  }
+  client,
 });
-

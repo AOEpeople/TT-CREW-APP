@@ -10,21 +10,17 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "TT-Database": {
-      "database": string
-      "host": string
-      "password": string
-      "port": number
-      "type": "sst.aws.Postgres"
-      "username": string
-    }
     "TT-Nextjs": {
       "type": "sst.aws.Nextjs"
       "url": string
     }
-    "TT-VPC": {
-      "bastion": string
-      "type": "sst.aws.Vpc"
+    "TURSO_AUTH_TOKEN": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "TURSO_DATABASE_URL": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
   }
 }
