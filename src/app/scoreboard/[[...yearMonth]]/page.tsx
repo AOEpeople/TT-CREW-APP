@@ -25,11 +25,11 @@ export default async function ScoreBoard({
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 
-  const yearMonth = await (await params).yearMonth
+  const yearMonth = await (await params).yearMonth;
   // redirect to current month if no slug is provided in path
   if (!yearMonth) {
     redirect(
-      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`
+      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`,
     );
   }
 
@@ -46,13 +46,13 @@ export default async function ScoreBoard({
   ) {
     // redirect to current month if invalid slug is provided in path or future month is requested
     redirect(
-      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`
+      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`,
     );
   }
 
   try {
     const thisMonthResult = await getMonthResult(
-      new Date(data.year, data.month - 1)
+      new Date(data.year, data.month - 1),
     );
 
     const firstThreePlayers = thisMonthResult.slice(0, 3);
@@ -85,14 +85,15 @@ export default async function ScoreBoard({
             {firstThreePlayers.map((player, index) => (
               <div
                 key={player.id}
-                className={`p-8 rounded-md ${index === 0
-                  ? "bg-gold"
-                  : index === 1
-                    ? "bg-silver"
-                    : index === 2
-                      ? "bg-bronze"
-                      : "bg-gray-200"
-                  } ${index <= 3 ? `shadow-lg` : `shadow`} relative`}
+                className={`p-8 rounded-md ${
+                  index === 0
+                    ? "bg-gold"
+                    : index === 1
+                      ? "bg-silver"
+                      : index === 2
+                        ? "bg-bronze"
+                        : "bg-gray-200"
+                } ${index <= 3 ? `shadow-lg` : `shadow`} relative`}
               >
                 <div className="flex flex-col items-center justify-center">
                   <div className="  text-xl font-medium">

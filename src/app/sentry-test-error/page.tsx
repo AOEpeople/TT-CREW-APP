@@ -3,7 +3,7 @@ export default async function SentryTestError() {
   async function throwServerErrror() {
     "use server";
     throw new Error(
-      `This is a test error for Sentry thrown at ${new Date().toISOString()}`
+      `This is a test error for Sentry thrown at ${new Date().toISOString()}`,
     );
   }
   return (

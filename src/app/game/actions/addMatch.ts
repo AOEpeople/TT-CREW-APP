@@ -26,9 +26,8 @@ export default async function addMatch(formData: FormData) {
     async () => {
       try {
         const { winnerId1, winnerId2 } = inputSchema.parse(
-          formDataToObject(formData)
+          formDataToObject(formData),
         );
-
 
         // Insert the match and the playerMatches as a transaction to ensure consistency
         await db.transaction(async (tx) => {
@@ -68,6 +67,6 @@ export default async function addMatch(formData: FormData) {
         console.error(error);
         throw new Error("Could not add match");
       }
-    }
+    },
   );
 }

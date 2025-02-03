@@ -25,7 +25,6 @@ export default async function addPlayer(formData: FormData) {
     async () => {
       const { name, emoji } = inputSchema.parse(formDataToObject(formData));
 
-
       const players = await db.query.players.findMany();
 
       if (
@@ -45,6 +44,6 @@ export default async function addPlayer(formData: FormData) {
         .execute();
 
       redirect("/game");
-    }
+    },
   );
 }

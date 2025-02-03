@@ -5,7 +5,7 @@ import { db } from "..";
 export const publishMonthResult = async (date: Date) => {
   const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
   console.info(
-    `Publishing month result for ${lastDayOfMonth.toLocaleDateString("de-DE")}`
+    `Publishing month result for ${lastDayOfMonth.toLocaleDateString("de-DE")}`,
   );
 
   const doesMonthResultExist = await db.query.monthResult.findFirst({
@@ -14,13 +14,13 @@ export const publishMonthResult = async (date: Date) => {
   if (doesMonthResultExist !== undefined) {
     console.log(
       `Month result already exists for ${lastDayOfMonth.toLocaleDateString(
-        "de-DE"
-      )}`
+        "de-DE",
+      )}`,
     );
     throw new Error(
       `Month result already exists for ${lastDayOfMonth.toLocaleDateString(
-        "de-DE"
-      )}`
+        "de-DE",
+      )}`,
     );
   }
 
