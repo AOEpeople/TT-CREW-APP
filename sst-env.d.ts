@@ -10,10 +10,6 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "TT-Nextjs": {
-      "type": "sst.aws.Nextjs"
-      "url": string
-    }
     "TURSO_AUTH_TOKEN": {
       "type": "sst.sst.Secret"
       "value": string
