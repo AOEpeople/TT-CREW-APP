@@ -1,0 +1,21 @@
+[
+  { "id": 1, "monthResult": 1, "player": 4, "points": 155 },
+  { "id": 2, "monthResult": 1, "player": 1, "points": 143 },
+  { "id": 3, "monthResult": 1, "player": 2, "points": 57 },
+  { "id": 4, "monthResult": 1, "player": 6, "points": 37 },
+  { "id": 5, "monthResult": 1, "player": 9, "points": 30 },
+  { "id": 6, "monthResult": 1, "player": 8, "points": 23 },
+  { "id": 7, "monthResult": 1, "player": 7, "points": 20 },
+  { "id": 8, "monthResult": 1, "player": 11, "points": 20 },
+  { "id": 9, "monthResult": 1, "player": 13, "points": 19 },
+  { "id": 10, "monthResult": 1, "player": 15, "points": 11 },
+  { "id": 11, "monthResult": 1, "player": 10, "points": 11 },
+  { "id": 12, "monthResult": 1, "player": 5, "points": 8 },
+  { "id": 13, "monthResult": 1, "player": 3, "points": 7 },
+  { "id": 14, "monthResult": 1, "player": 54, "points": 6 },
+  { "id": 15, "monthResult": 1, "player": 12, "points": 4 },
+  { "id": 16, "monthResult": 1, "player": 22, "points": 3 },
+  { "id": 17, "monthResult": 1, "player": 25, "points": 2 },
+  { "id": 18, "monthResult": 1, "player": 16, "points": 1 },
+  { "id": 19, "monthResult": 1, "player": 46, "points": 1 }
+]
