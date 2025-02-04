@@ -18,12 +18,9 @@ type Player = {
   priority: number;
 };
 export default async function Game() {
-
   let players: Player[] | undefined = undefined;
-  let error = undefined;
   try {
     players = await db.query.players.findMany();
-
   } catch (e) {
     console.error(e);
   }

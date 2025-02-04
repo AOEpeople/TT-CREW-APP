@@ -19,23 +19,24 @@ const ParamsSchema = z.object({
 export default async function ScoreBoard({
   params,
 }: {
-  readonly params: { yearMonth: string };
+  readonly params: Promise<{ yearMonth: string }>;
 }) {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 
+  const yearMonth = await (await params).yearMonth;
   // redirect to current month if no slug is provided in path
-  if (!params.yearMonth) {
+  if (!yearMonth) {
     redirect(
-      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`
+      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`,
     );
   }
 
   // validate slug in path
   const { success, data } = ParamsSchema.safeParse({
-    year: params.yearMonth[0],
-    month: params.yearMonth[1],
+    year: yearMonth[0],
+    month: yearMonth[1],
   });
 
   if (
@@ -45,13 +46,13 @@ export default async function ScoreBoard({
   ) {
     // redirect to current month if invalid slug is provided in path or future month is requested
     redirect(
-      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`
+      `/scoreboard/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}`,
     );
   }
 
   try {
     const thisMonthResult = await getMonthResult(
-      new Date(data.year, data.month - 1)
+      new Date(data.year, data.month - 1),
     );
 
     const firstThreePlayers = thisMonthResult.slice(0, 3);
@@ -88,10 +89,10 @@ export default async function ScoreBoard({
                   index === 0
                     ? "bg-gold"
                     : index === 1
-                    ? "bg-silver"
-                    : index === 2
-                    ? "bg-bronze"
-                    : "bg-gray-200"
+                      ? "bg-silver"
+                      : index === 2
+                        ? "bg-bronze"
+                        : "bg-gray-200"
                 } ${index <= 3 ? `shadow-lg` : `shadow`} relative`}
               >
                 <div className="flex flex-col items-center justify-center">
@@ -105,10 +106,10 @@ export default async function ScoreBoard({
                     {index === 0
                       ? "🥇"
                       : index === 1
-                      ? "🥈"
-                      : index === 2
-                      ? "🥉"
-                      : ""}
+                        ? "🥈"
+                        : index === 2
+                          ? "🥉"
+                          : ""}
                   </p>
                 </div>
               </div>

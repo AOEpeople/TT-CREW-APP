@@ -1,85 +1,70 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
-import {
-  pgTable,
-  timestamp,
-  integer,
-  pgEnum,
-  serial,
-  text,
-  real,
-} from "drizzle-orm/pg-core";
+import { sqliteTable, integer, text, real } from "drizzle-orm/sqlite-core";
 
-/* 
-
-Users are not in implementation scope for now, but can be implemented later. 
-Currently the plan is, to have one default user, which is used to create all player entries.
-
-*/
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey(),
   username: text("username").notNull(),
 });
 
-/**
- * Players are the actual players.
- */
-export const playerStatusEnum = pgEnum("status", [
-  "ACTIVE",
-  "INACTIVE",
-  "HALL_OF_FAME",
-]);
-export const players = pgTable("players", {
-  id: serial("id").primaryKey(),
+export const players = sqliteTable("players", {
+  id: integer("id").primaryKey(),
   name: text("name").notNull(),
   emoji: text("emoji"),
-  createdAt: timestamp("createdAt").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updatedAt", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+
   createdBy: integer("createdBy").notNull(),
   rating: integer("rating"),
   priority: integer("priority").notNull().default(9999),
-  status: playerStatusEnum("status").default("ACTIVE"),
+  status: text({ enum: ["ACTIVE", "INACTIVE", "HALL_OF_FAME"] }).default(
+    "ACTIVE",
+  ),
 });
 
-export const ratings = pgTable("ratings", {
-  id: serial("id").primaryKey(),
+export const ratings = sqliteTable("ratings", {
+  id: integer("id").primaryKey(),
   averageSkill: real("averageSkill").default(25),
   uncertainty: real("uncertainty").default(8.3),
   player: integer("player").notNull(),
 });
 
-export const matches = pgTable("matches", {
-  id: serial("id").primaryKey(),
-  createdAt: timestamp("createdAt").notNull(), // No auto-date 'cause db-server timezone would be used
+export const matches = sqliteTable("matches", {
+  id: integer("id").primaryKey(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
   enteredBy: integer("enteredBy").notNull(),
 });
-export const wonLostEnum = pgEnum("type", ["WON", "LOST"]);
 
-export const playerMatches = pgTable("playerMatches", {
-  id: serial("id").primaryKey(),
-  type: wonLostEnum("type"),
+export type WonLost = "WON" | "LOST";
+
+export const playerMatches = sqliteTable("playerMatches", {
+  id: integer("id").primaryKey(),
+  type: text({ enum: ["WON", "LOST"] }).notNull(),
   match: integer("match").notNull(),
   player: integer("player").notNull(),
 });
 
-export const monthResult = pgTable("monthResult", {
-  id: serial("id").primaryKey(),
-  createdAt: timestamp("createdAt").notNull().unique(),
+export const monthResult = sqliteTable("monthResult", {
+  id: integer("id").primaryKey(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
   enteredBy: integer("enteredBy").notNull(),
 });
 
-export const monthResultPlayers = pgTable("monthResultPlayers", {
-  id: serial("id").primaryKey(),
+export const monthResultPlayers = sqliteTable("monthResultPlayers", {
+  id: integer("id").primaryKey(),
   monthResult: integer("monthResult").notNull(),
   player: integer("player").notNull(),
   points: integer("points").notNull(),
 });
 
-/**
- *  since planetScale can't use foreign key constraints, we have to define the relations manual
- *    1 User ---- (creates) ---- N Players
- *    1 Player -- (wins/looses) --- N PlayersMatch
- *    1 Match -- (hasPlayers) --- N PlayersMatch
- */
 export const usersRelations = relations(users, ({ many }) => ({
   players: many(players),
 }));
@@ -142,5 +127,5 @@ export const monthResultPlayersRelations = relations(
       references: [monthResult.id],
       relationName: "monthResultPlayerToMonthResult",
     }),
-  })
+  }),
 );

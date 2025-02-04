@@ -4,8 +4,6 @@ import addMatch from "../actions/addMatch";
 import { useEffect, useState } from "react";
 
 import PlayerTile from "./playerTile";
-import { ToastAction } from "@radix-ui/react-toast";
-import { useToast } from "@/components/ui/use-toast";
 import { ConfirmationModal } from "./confirmationModal";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -31,10 +29,9 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
   const [filter, setFilter] = useState("");
 
   const handlePlayerClick = (player: Player) => {
-
     if (isMultiSelection) {
       if (selectedPlayers.includes(player)) {
-        setSelectedPlayers(selectedPlayers.filter(p => p !== player));
+        setSelectedPlayers(selectedPlayers.filter((p) => p !== player));
       } else {
         setSelectedPlayers([...selectedPlayers, player]);
         if (selectedPlayers.length === 1) {
@@ -74,7 +71,12 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
     <div className="flex justify-center flex-col gap-3 p-3 ">
       <div className="flex gap-3 justify-end">
         Losers Cup
-        <Switch onClick={(e) => { setIsMultiSelection((isMultiSelection) => !isMultiSelection); setSelectedPlayers([]) }} />
+        <Switch
+          onClick={() => {
+            setIsMultiSelection((isMultiSelection) => !isMultiSelection);
+            setSelectedPlayers([]);
+          }}
+        />
       </div>
       {isMultiSelection && <p>Wähle zwei Spieler aus, die gewonnen haben</p>}
       <Input
@@ -88,7 +90,9 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
 
       <div className="flex flex-wrap gap-10 justify-center">
         {players
-          .filter((player) => player.name.toLowerCase().includes(filter.toLowerCase()))
+          .filter((player) =>
+            player.name.toLowerCase().includes(filter.toLowerCase()),
+          )
           .toSorted((a, b) => a.priority - b.priority)
           .map((player) => (
             <PlayerTile
@@ -103,7 +107,10 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}
-          onClose={() => { setIsModalOpen(false); setSelectedPlayers([]) }}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedPlayers([]);
+          }}
           onConfirm={handleConfirm}
           message={getConfirmationMessage(selectedPlayers)}
         />
@@ -130,6 +137,7 @@ function getOfflinePlayers(): Player[] | undefined {
     if (!offlinePlayerJSON) return undefined;
     return JSON.parse(offlinePlayerJSON) as Player[];
   } catch (e) {
+    console.error("Error while reading offline players", e);
     return undefined;
   }
 }
@@ -156,13 +164,13 @@ function sendWinnerToDB(winner1: Player, winner2?: Player) {
   console.log(
     "sending Formdata:",
     formData.keys().next().value,
-    formData.entries().next().value
+    formData.entries().next().value,
   );
   const addPlayerAndToast = (i = 1) => {
     if (i === 4) {
       toast.error(
         "Der Schissl scheint nicht zu funktionieren, der Punkt wird erstmal offline gespeichert.",
-        { dismissible: true }
+        { dismissible: true },
       );
       writePlayerMatchToLocalStorage(winner1);
       if (winner2) {
@@ -177,11 +185,11 @@ function sendWinnerToDB(winner1: Player, winner2?: Player) {
             ? `Versuche Sieg einzutragen...`
             : `Dann probieren wir es halt noch ein ${i}tes mal den Sieg einzutragen...`,
         success: `Wuhu Cola und Forntnite für ${winner1.name}${winner1.emoji} ${winner2 ? " und " + winner2.name + winner2.emoji : ""}`,
-        error: (error) => {
+        error: () => {
           addPlayerAndToast(i + 1);
           return `Fehler beim ${i}ten Versuch, ${winner1.name}${winner1.emoji} einzutragen...`;
         },
-      },);
+      });
     }
   };
   addPlayerAndToast();
@@ -195,15 +203,13 @@ const writePlayerMatchToLocalStorage = (player: Player) => {
     timestamp: new Date().toISOString(),
   };
   const playerMatches: OfflinePlayerMatch[] = JSON.parse(
-    localStorage.getItem("playerMatches") || "[]"
+    localStorage.getItem("playerMatches") ?? "[]",
   );
   playerMatches.push(playerMatch);
   localStorage.setItem("playerMatches", JSON.stringify(playerMatches));
-  toast.success(
-    `Sieg von ${player.name}${player.emoji} offline gespeichert`,
-    { dismissible: true }
-  );
-
+  toast.success(`Sieg von ${player.name}${player.emoji} offline gespeichert`, {
+    dismissible: true,
+  });
 };
 
 type OfflinePlayerMatch = {

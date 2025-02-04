@@ -67,7 +67,9 @@ export default function MonthSelect({ month, year }: MonthSelectProps) {
       </Button>
       <h2 className="text-2xl">
         für {getMonthYearString({ year, month })}
-        {isActiveMonth && <span className="text-sm p-3 italic">(aktiver Monat)</span>}
+        {isActiveMonth && (
+          <span className="text-sm p-3 italic">(aktiver Monat)</span>
+        )}
       </h2>
       <div>
         {!isActiveMonth && (

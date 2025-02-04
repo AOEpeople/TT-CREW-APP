@@ -6,23 +6,20 @@ import { db } from "..";
 
 export const getMonthResult = async (date: Date) => {
   try {
-
     const firstDayOfThisMonth = new Date(
       date.getFullYear(),
       date.getMonth(),
-      1
+      1,
     );
     const lastDayOfThisMonth = new Date(
       date.getFullYear(),
       date.getMonth() + 1,
-      0
+      0,
     );
-
-    //TODO: fix bevor january 2025
     const firstDayOfLastMonth = new Date(
       date.getFullYear(),
       date.getMonth() - 1,
-      1
+      1,
     );
     const lastMonthResultOrdered = await db
       .select({
@@ -36,16 +33,16 @@ export const getMonthResult = async (date: Date) => {
       .where(
         and(
           gt(schema.monthResult.createdAt, firstDayOfLastMonth),
-          lt(schema.monthResult.createdAt, firstDayOfThisMonth)
-        )
+          lt(schema.monthResult.createdAt, firstDayOfThisMonth),
+        ),
       )
       .leftJoin(
         schema.monthResultPlayers,
-        eq(schema.monthResult.id, schema.monthResultPlayers.monthResult)
+        eq(schema.monthResult.id, schema.monthResultPlayers.monthResult),
       )
       .leftJoin(
         schema.players,
-        eq(schema.players.id, schema.monthResultPlayers.player)
+        eq(schema.players.id, schema.monthResultPlayers.player),
       )
       .orderBy(desc(schema.monthResultPlayers.points));
     const pointsMultiplicationRules = [
@@ -56,7 +53,7 @@ export const getMonthResult = async (date: Date) => {
         const multiplier = pointsMultiplicationRules[index] ?? 1;
         const offset = points ? Math.round(points * multiplier) : 0;
         return { playerId, offset };
-      }
+      },
     );
 
     const thisMonthPlayerWins = await db
@@ -69,18 +66,18 @@ export const getMonthResult = async (date: Date) => {
       .from(schema.players)
       .leftJoin(
         schema.playerMatches,
-        eq(schema.players.id, schema.playerMatches.player)
+        eq(schema.players.id, schema.playerMatches.player),
       )
       .leftJoin(
         schema.matches,
-        eq(schema.playerMatches.match, schema.matches.id)
+        eq(schema.playerMatches.match, schema.matches.id),
       )
       .where(
         and(
           eq(schema.playerMatches.type, "WON"),
           gt(schema.matches.createdAt, firstDayOfThisMonth),
-          lt(schema.matches.createdAt, lastDayOfThisMonth)
-        )
+          lt(schema.matches.createdAt, lastDayOfThisMonth),
+        ),
       )
       .groupBy(schema.players.id)
       .orderBy(desc(count(schema.playerMatches.id)));
@@ -88,7 +85,7 @@ export const getMonthResult = async (date: Date) => {
     const thisMonthResult = thisMonthPlayerWins
       .map((player) => {
         const offset =
-          offsetPoints.find(({ playerId }) => playerId === player.id)?.offset ||
+          offsetPoints.find(({ playerId }) => playerId === player.id)?.offset ??
           0;
         return {
           ...player,

@@ -29,20 +29,19 @@ export async function GET(request: NextRequest) {
 
     const { year, month } = paramsResult.data;
 
-
     // Find the last day of the month
     const lastDayOfMonth = new Date(year, month, 0);
 
     // Check if the input date is in the future
     if (new Date() < lastDayOfMonth) {
       throw new Error(
-        `Input ${lastDayOfMonth.toLocaleString("de-DE")} is in the future`
+        `Input ${lastDayOfMonth.toLocaleString("de-DE")} is in the future`,
       );
     }
 
     console.log(
       "Calling publish month result with",
-      lastDayOfMonth.toLocaleDateString("de-DE")
+      lastDayOfMonth.toLocaleDateString("de-DE"),
     );
     await publishMonthResult(lastDayOfMonth);
 
