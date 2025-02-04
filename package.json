@@ -63,5 +63,8 @@
   "resolutions": {
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3"
+  },
+  "optionalDependencies": {
+    "@libsql/linux-x64-gnu": "0.5.0-pre.6"
   }
 }
