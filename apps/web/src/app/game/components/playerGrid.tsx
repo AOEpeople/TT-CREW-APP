@@ -69,8 +69,8 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
 
   return (
     <div className="flex justify-center flex-col gap-3 p-3 ">
-      <div className="flex gap-3 justify-end">
-        Losers Cup
+      <div className="flex gap-3 justify-end items-center">
+        <span className="text-white font-medium">Losers Cup</span>
         <Switch
           onClick={() => {
             setIsMultiSelection((isMultiSelection) => !isMultiSelection);
@@ -78,7 +78,41 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
           }}
         />
       </div>
-      {isMultiSelection && <p>Wähle zwei Spieler aus, die gewonnen haben</p>}
+      {isMultiSelection && (
+        <div className="bg-slate-800/50 p-3 rounded-md border border-slate-700">
+          <p className="text-white font-medium mb-1">Wähle zwei Spieler aus, die gewonnen haben</p>
+          <p className="text-slate-300 text-sm mb-2">
+            {selectedPlayers.length === 0 
+              ? "Noch keine Spieler ausgewählt" 
+              : selectedPlayers.length === 1 
+                ? "Noch ein Spieler auswählen" 
+                : "Beide Spieler ausgewählt"}
+          </p>
+          <div className="flex items-center gap-2 min-h-[32px]">
+            {selectedPlayers.length > 0 ? (
+              <>
+                <span className="text-slate-300 text-sm">Ausgewählte Spieler:</span>
+                <div className="flex gap-2">
+                  {selectedPlayers.map((player, index) => (
+                    <div 
+                      key={player.id} 
+                      className={`px-2 py-1 rounded text-sm ${
+                        index === 0 
+                          ? "bg-yellow-600/70 text-white font-medium" 
+                          : "bg-slate-700/70 text-slate-300"
+                      }`}
+                    >
+                      {player.name} {player.emoji}
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <span className="text-slate-400 text-sm italic">Keine Spieler ausgewählt</span>
+            )}
+          </div>
+        </div>
+      )}
       <Input
         type="text"
         name="filter"
@@ -86,6 +120,7 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
         required
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
+        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus-visible:ring-slate-500"
       />
 
       <div className="flex flex-wrap gap-10 justify-center">
@@ -99,6 +134,7 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
               key={player.id}
               name={player.name}
               selected={selectedPlayers.includes(player)}
+              selectionIndex={selectedPlayers.findIndex(p => p.id === player.id)}
               emoji={player.emoji || "👾"}
               onClick={() => handlePlayerClick(player)}
             />
@@ -169,7 +205,7 @@ function sendWinnerToDB(winner1: Player, winner2?: Player) {
   const addPlayerAndToast = (i = 1) => {
     if (i === 4) {
       toast.error(
-        "Der Schissl scheint nicht zu funktionieren, der Punkt wird erstmal offline gespeichert.",
+        "Der Server scheint nicht zu funktionieren, der Punkt wird erstmal offline gespeichert.",
         { dismissible: true },
       );
       writePlayerMatchToLocalStorage(winner1);
@@ -183,8 +219,8 @@ function sendWinnerToDB(winner1: Player, winner2?: Player) {
         loading:
           i == 1
             ? `Versuche Sieg einzutragen...`
-            : `Dann probieren wir es halt noch ein ${i}tes mal den Sieg einzutragen...`,
-        success: `Wuhu Cola und Forntnite für ${winner1.name}${winner1.emoji} ${winner2 ? " und " + winner2.name + winner2.emoji : ""}`,
+            : `Dann probieren wir es noch ein ${i}tes Mal, den Sieg einzutragen...`,
+        success: `Glückwunsch! Cola und Fortnite für ${winner1.name}${winner1.emoji} ${winner2 ? " und " + winner2.name + winner2.emoji : ""}`,
         error: () => {
           addPlayerAndToast(i + 1);
           return `Fehler beim ${i}ten Versuch, ${winner1.name}${winner1.emoji} einzutragen...`;

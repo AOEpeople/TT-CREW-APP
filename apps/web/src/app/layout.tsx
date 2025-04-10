@@ -18,7 +18,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body 
+        className={inter.className}
+        style={{
+          background: "linear-gradient(160deg, #0d1b2a, #1b263b, #415a77, #778da9)",
+          backgroundAttachment: "fixed",
+          minHeight: "100vh",
+        }}
+      >
+        {children}
+      </body>
       <Toaster />
     </html>
   );

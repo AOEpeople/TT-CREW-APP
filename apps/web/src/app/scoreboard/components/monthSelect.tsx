@@ -57,7 +57,7 @@ export default function MonthSelect({ month, year }: MonthSelectProps) {
 
   return (
     <div className="flex justify-between items-center p-3">
-      <Button asChild variant="link">
+      <Button asChild variant="link" className="text-white">
         <Link
           href={`/scoreboard/${previousMonthYear.year}/${previousMonthYear.month}`}
         >
@@ -65,15 +65,15 @@ export default function MonthSelect({ month, year }: MonthSelectProps) {
           {previousMonthYearString}
         </Link>
       </Button>
-      <h2 className="text-2xl">
+      <h2 className="text-2xl text-white">
         für {getMonthYearString({ year, month })}
         {isActiveMonth && (
-          <span className="text-sm p-3 italic">(aktiver Monat)</span>
+          <span className="text-sm p-3 italic text-gray-300">(aktiver Monat)</span>
         )}
       </h2>
       <div>
         {!isActiveMonth && (
-          <Button asChild variant="link">
+          <Button asChild variant="link" className="text-white">
             <Link
               href={`/scoreboard/${nextMonthYear.year}/${nextMonthYear.month}`}
             >

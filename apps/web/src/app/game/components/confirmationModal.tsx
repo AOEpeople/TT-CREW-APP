@@ -18,11 +18,11 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-50">
-      <div className="bg-white p-6 w-full max-w-md mx-auto rounded-lg shadow-xl modal-responsive">
-        <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">
-          🎉Bitte betstätige🎉
+      <div className="bg-slate-800 p-6 w-full max-w-md mx-auto rounded-lg shadow-xl modal-responsive">
+        <h2 className="text-xl font-semibold mb-4 text-center text-white">
+          🎉Bitte bestätige🎉
         </h2>
-        <p className="text-gray-600 text-center mb-6">{message}</p>
+        <p className="text-gray-300 text-center mb-6">{message}</p>
         <div className="flex flex-col gap-3">
           <button
             onClick={onConfirm}

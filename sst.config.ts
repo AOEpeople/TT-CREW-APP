@@ -10,16 +10,15 @@ export default $config({
     };
   },
   async run() {
-    const SENTRY_AUTH_TOKEN = new sst.Secret("SENTRY_AUTH_TOKEN");
-    const TURSO_DATABASE_URL = new sst.Secret("TURSO_DATABASE_URL");
-    const TURSO_AUTH_TOKEN = new sst.Secret("TURSO_AUTH_TOKEN");
+    // Import infrastructure files
+    const { secrets } = await import("./infra/secrets");
+    const { web } = await import("./infra/web");
 
-    new sst.aws.Nextjs("TT-Nextjs", {
-      link: [SENTRY_AUTH_TOKEN, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN],
-      domain:
-        $app.stage === "production"
-          ? "tt-crew.app"
-          : `${$app.stage}-preview.tt-crew.app`,
-    });
+    // Create web app with secrets
+    const webApp = web(Object.values(secrets));
+
+    return {
+      webAppUrl: webApp.url,
+    };
   },
 });
