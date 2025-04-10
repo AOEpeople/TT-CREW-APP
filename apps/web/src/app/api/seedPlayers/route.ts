@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 
-import { players_2024 } from "../../../../drizzle/seedData/players";
+import { players_2024 } from "../../../../../../drizzle/seedData/players";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,7 @@ export async function GET() {
   await db
     .insert(schema.players)
     .values(
-      players_2024.map((player) => ({
+      players_2024.map((player: { name: string; emoji: string }) => ({
         ...player,
         createdAt: new Date(),
         createdBy: 1,
