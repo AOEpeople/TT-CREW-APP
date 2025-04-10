@@ -1,16 +1,23 @@
 {
-  "name": "tt-crew-app-monorepo",
+  "name": "tt-crew-app",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "pnpm -r build",
-    "dev": "pnpm --filter @tt-crew-app/web dev",
+    "build": "bun run build:core && bun run build:web",
+    "build:core": "bun run --cwd packages/core build",
+    "build:web": "bun run --cwd apps/web build",
+    "dev": "concurrently \"bun run dev:core\" \"bun run dev:web\"",
+    "dev:core": "bun run --cwd packages/core dev",
+    "dev:web": "bun run --cwd apps/web dev",
+    "clean": "bun run clean:core && bun run clean:web",
+    "clean:core": "bun run --cwd packages/core clean",
+    "clean:web": "rm -rf apps/web/.next",
     "lint": "pnpm -r lint",
     "db:generate": "pnpm --filter @tt-crew-app/web db:generate",
     "db:migrate": "pnpm --filter @tt-crew-app/web db:migrate",
     "db:push": "pnpm --filter @tt-crew-app/web db:push",
     "db:push:remote": "pnpm --filter @tt-crew-app/web db:push:remote",
     "db:studio": "pnpm --filter @tt-crew-app/web db:studio",
-    "postgres:docker": "pnpm --filter @tt-crew-app/web postgres:docker",
     "infra:dev": "sst dev",
     "infra:build": "sst build",
     "infra:deploy": "sst deploy",
@@ -20,17 +27,26 @@
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@next/eslint-plugin-next": "^15.3.0",
+    "concurrently": "^8.2.2",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-sonarjs": "^3.0.2",
     "globals": "^16.0.0",
-    "sst": "^3.4.49",
+    "sst": "^3.13.7",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.29.1"
   },
   "resolutions": {
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3"
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "trustedDependencies": [
+    "aws-sdk",
+    "es5-ext"
+  ]
 }
