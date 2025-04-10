@@ -21,14 +21,26 @@ export default function Home() {
       </h1>
 
       <div className="flex flex-col items-center space-y-4 relative z-10">
-        <Button asChild size="lg" className="w-full">
-          <Link href="/game">🏓 Spiel eintragen</Link>
+        <Button 
+          asChild 
+          size="lg" 
+          className="w-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 hover:from-blue-700 hover:via-blue-600 hover:to-blue-700 shadow-lg hover:shadow-blue-500/50 transition-all duration-200 border border-blue-400/50"
+        >
+          <Link href="/game" className="py-6 text-lg font-semibold">🏓 Spiel eintragen</Link>
         </Button>
-        <Button asChild variant="secondary" className="w-full">
-          <Link href="/new-player">Neuen Spieler eintragen</Link>
+        <Button 
+          asChild 
+          variant="secondary" 
+          className="w-full bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white shadow-lg hover:shadow-slate-500/50 transition-all duration-200 border border-slate-600/50"
+        >
+          <Link href="/new-player" className="py-4">Neuen Spieler eintragen</Link>
         </Button>
-        <Button asChild variant="secondary" className="w-full">
-          <Link href="/scoreboard">Leaderboard</Link>
+        <Button 
+          asChild 
+          variant="secondary" 
+          className="w-full bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white shadow-lg hover:shadow-slate-500/50 transition-all duration-200 border border-slate-600/50"
+        >
+          <Link href="/scoreboard" className="py-4">Leaderboard</Link>
         </Button>
       </div>
     </div>

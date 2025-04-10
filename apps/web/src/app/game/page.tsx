@@ -1,29 +1,13 @@
-export const dynamic = "force-dynamic";
-
-import PlayerGrid from "./components/playerGrid";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import PlayerGrid from "./components/playerGrid";
+import { gameCore } from "@/lib/gameCore";
+import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-
-import { db } from "@/db";
 import { Suspense } from "react";
 
-type Player = {
-  id: number;
-  name: string;
-  emoji: string | null;
-  createdAt: Date;
-  createdBy: number;
-  rating: number | null;
-  priority: number;
-};
-export default async function Game() {
-  let players: Player[] | undefined = undefined;
-  try {
-    players = await db.query.players.findMany();
-  } catch (e) {
-    console.error(e);
-  }
+export default async function Page() {
+
+  const players = await gameCore.getActivePlayers();
 
   return (
     <main className="h-screen w-screen p-4">
@@ -34,7 +18,7 @@ export default async function Game() {
             zurück
           </Link>
         </Button>
-      </div>
+    </div>
       <h1 className="text-3xl font-bold mb-4 text-center text-white">Spiel</h1>
       <Suspense fallback={<p className="text-white">lade...</p>}>
         <PlayerGrid players={players} />

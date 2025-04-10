@@ -1,27 +1,19 @@
 "use client";
 
-import addMatch from "../actions/addMatch";
+import {addMatch} from "../actions/addMatch";
 import { useEffect, useState } from "react";
-
 import PlayerTile from "./playerTile";
 import { ConfirmationModal } from "./confirmationModal";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
-
-export interface Player {
-  id: number;
-  name: string;
-  emoji: string | null;
-  priority: number;
-}
+import type { Player } from "@/types";
 
 interface PlayerGridProps {
   players?: Player[];
 }
 
 export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
-  "use client";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMultiSelection, setIsMultiSelection] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
@@ -64,8 +56,9 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
     setIsModalOpen(false);
   };
 
-  const currentOfflinePlayerMatches: OfflinePlayerMatch[] =
-    localStorage && JSON.parse(localStorage.getItem("playerMatches") || "[]");
+  const currentOfflinePlayerMatches: OfflinePlayerMatch[] = typeof window !== 'undefined' 
+    ? JSON.parse(localStorage.getItem("playerMatches") || "[]")
+    : [];
 
   return (
     <div className="flex justify-center flex-col gap-3 p-3 ">
@@ -168,6 +161,7 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
 }
 
 function getOfflinePlayers(): Player[] | undefined {
+  if (typeof window === "undefined") return undefined;  
   try {
     const offlinePlayerJSON = localStorage.getItem("playerBackup");
     if (!offlinePlayerJSON) return undefined;
@@ -179,7 +173,9 @@ function getOfflinePlayers(): Player[] | undefined {
 }
 
 function writeOfflinePlayers(players: Player[]) {
-  localStorage.setItem("playerBackup", JSON.stringify(players));
+  if (typeof window !== "undefined") {
+    localStorage.setItem("playerBackup", JSON.stringify(players));
+  }
 }
 
 function getConfirmationMessage(selectedPlayers: Player[]) {
@@ -232,10 +228,10 @@ function sendWinnerToDB(winner1: Player, winner2?: Player) {
 }
 
 const writePlayerMatchToLocalStorage = (player: Player) => {
+  if (typeof window === 'undefined') return;
   const playerMatch = {
     player: player.id,
     displayName: player.name + player.emoji,
-
     timestamp: new Date().toISOString(),
   };
   const playerMatches: OfflinePlayerMatch[] = JSON.parse(
@@ -244,7 +240,7 @@ const writePlayerMatchToLocalStorage = (player: Player) => {
   playerMatches.push(playerMatch);
   localStorage.setItem("playerMatches", JSON.stringify(playerMatches));
   toast.success(`Sieg von ${player.name}${player.emoji} offline gespeichert`, {
-    dismissible: true,
+    duration: 2000,
   });
 };
 

@@ -1,9 +1,16 @@
 export const dynamic = "force-dynamic";
 import Link from "next/link";
-import { getMonthResult } from "@/db/queries/getMonthResult";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import MonthSelect from "../components/monthSelect";
+import { gameCore } from "@/lib/gameCore";
+
+interface MonthResultWithPlayer {
+  id: number;
+  name: string;
+  emoji: string | null;
+  wins: number;
+}
 
 const ParamsSchema = z.object({
   year: z
@@ -15,6 +22,84 @@ const ParamsSchema = z.object({
     .regex(/^(0?[1-9]|1[0-2])$/)
     .transform(Number), // Month must be between 01 and 12
 });
+
+// Top player card component to reduce cognitive complexity
+function TopPlayerCard({ player, index }: { player: MonthResultWithPlayer; index: number }) {
+  const getCardStyles = (index: number) => {
+    switch (index) {
+      case 0:
+        return "bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.8)] border border-yellow-200/50";
+      case 1:
+        return "bg-gradient-to-br from-gray-300 via-slate-100 to-gray-400 shadow-[0_0_25px_rgba(203,213,225,0.7)] border border-gray-200/50";
+      default:
+        return "bg-gradient-to-br from-amber-900 via-yellow-800 to-amber-950 shadow-[0_0_25px_rgba(146,64,14,0.7)] border border-amber-500/50";
+    }
+  };
+
+  const getTextStyles = (index: number) => {
+    switch (index) {
+      case 0:
+        return "text-yellow-950";
+      case 1:
+        return "text-gray-900";
+      default:
+        return "text-amber-100";
+    }
+  };
+
+  const getShadowStyles = (index: number) => {
+    switch (index) {
+      case 0:
+        return '0 0 30px rgba(234,179,8,0.8), 0 0 15px rgba(234,179,8,0.4), inset 0 0 15px rgba(255,255,255,0.5)';
+      case 1:
+        return '0 0 25px rgba(203,213,225,0.7), 0 0 12px rgba(203,213,225,0.4), inset 0 0 12px rgba(255,255,255,0.4)';
+      default:
+        return '0 0 25px rgba(146,64,14,0.7), 0 0 12px rgba(146,64,14,0.4), inset 0 0 12px rgba(255,255,255,0.3)';
+    }
+  };
+
+  return (
+    <div
+      className={`p-8 rounded-md ${getCardStyles(index)} shadow-lg relative hover:scale-105 transition-transform duration-200 backdrop-blur-sm`}
+      style={{
+        backgroundBlendMode: 'overlay',
+        boxShadow: getShadowStyles(index),
+      }}
+    >
+      <div className="flex flex-col items-center justify-center">
+        <div className={`text-xl font-medium ${getTextStyles(index)} drop-shadow-md ${index !== 2 ? 'font-bold' : ''}`}>
+          {player.name} {player.emoji}
+        </div>
+        <div className={`text-3xl font-bold mt-2 ${getTextStyles(index)} drop-shadow-md`}>
+          {player.wins}
+        </div>
+        <div className={`text-sm ${getTextStyles(index)} drop-shadow-md ${index !== 2 ? 'font-medium' : ''}`}>
+          {player.wins === 1 ? "Sieg" : "Siege"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Other player row component
+function OtherPlayerRow({ player, index }: { player: MonthResultWithPlayer; index: number }) {
+  return (
+    <div className="flex items-center justify-between p-3 rounded-md bg-slate-600/50 hover:bg-slate-600/70 transition-colors">
+      <div className="flex items-center gap-2">
+        <span className="text-gray-300 font-medium">{index + 4}.</span>
+        <span className="text-white">
+          {player.name} {player.emoji}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="text-white font-bold">{player.wins}</span>
+        <span className="text-gray-300 text-sm">
+          {player.wins === 1 ? "Sieg" : "Siege"}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default async function ScoreBoard({
   params,
@@ -51,9 +136,7 @@ export default async function ScoreBoard({
   }
 
   try {
-    const thisMonthResult = await getMonthResult(
-      new Date(data.year, data.month - 1),
-    );
+    const thisMonthResult = await gameCore.getMonthResult(new Date(data.year, data.month - 1));
 
     const firstThreePlayers = thisMonthResult.slice(0, 3);
     const restOfPlayers = thisMonthResult.slice(3);
@@ -85,36 +168,7 @@ export default async function ScoreBoard({
           {/* Top 3 Players Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative mb-8">
             {firstThreePlayers.map((player, index) => (
-              <div
-                key={player.id}
-                className={`p-8 rounded-md ${
-                  index === 0
-                    ? "bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.8)] border border-yellow-200/50"
-                    : index === 1
-                      ? "bg-gradient-to-br from-gray-300 via-slate-100 to-gray-400 shadow-[0_0_25px_rgba(203,213,225,0.7)] border border-gray-200/50"
-                      : "bg-gradient-to-br from-amber-900 via-yellow-800 to-amber-950 shadow-[0_0_25px_rgba(146,64,14,0.7)] border border-amber-500/50"
-                } shadow-lg relative hover:scale-105 transition-transform duration-200 backdrop-blur-sm`}
-                style={{
-                  backgroundBlendMode: 'overlay',
-                  boxShadow: index === 0 
-                    ? '0 0 30px rgba(234,179,8,0.8), 0 0 15px rgba(234,179,8,0.4), inset 0 0 15px rgba(255,255,255,0.5)' 
-                    : index === 1 
-                      ? '0 0 25px rgba(203,213,225,0.7), 0 0 12px rgba(203,213,225,0.4), inset 0 0 12px rgba(255,255,255,0.4)' 
-                      : '0 0 25px rgba(146,64,14,0.7), 0 0 12px rgba(146,64,14,0.4), inset 0 0 12px rgba(255,255,255,0.3)',
-                }}
-              >
-                <div className="flex flex-col items-center justify-center">
-                  <div className={`text-xl font-medium ${index === 0 ? 'text-yellow-950 font-bold' : index === 1 ? 'text-gray-900 font-bold' : 'text-amber-100'} drop-shadow-md`}>
-                    {player.name} {player.emoji}
-                  </div>
-                  <div className={`text-3xl font-bold mt-2 ${index === 0 ? 'text-yellow-950' : index === 1 ? 'text-gray-900' : 'text-amber-100'} drop-shadow-md`}>
-                    {player.wins}
-                  </div>
-                  <div className={`text-sm ${index === 0 ? 'text-yellow-900 font-medium' : index === 1 ? 'text-gray-800 font-medium' : 'text-amber-200'} drop-shadow-md`}>
-                    {player.wins === 1 ? "Sieg" : "Siege"}
-                  </div>
-                </div>
-              </div>
+              <TopPlayerCard key={player.id} player={player} index={index} />
             ))}
           </div>
 
@@ -124,23 +178,7 @@ export default async function ScoreBoard({
               <h2 className="text-xl font-semibold text-white mb-4 text-center">Weitere Platzierungen</h2>
               <div className="space-y-2">
                 {restOfPlayers.map((player, index) => (
-                  <div
-                    key={player.id}
-                    className="flex items-center justify-between p-3 rounded-md bg-slate-600/50 hover:bg-slate-600/70 transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-300 font-medium">{index + 4}.</span>
-                      <span className="text-white">
-                        {player.name} {player.emoji}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-bold">{player.wins}</span>
-                      <span className="text-gray-300 text-sm">
-                        {player.wins === 1 ? "Sieg" : "Siege"}
-                      </span>
-                    </div>
-                  </div>
+                  <OtherPlayerRow key={player.id} player={player} index={index} />
                 ))}
               </div>
             </div>

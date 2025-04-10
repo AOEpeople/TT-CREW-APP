@@ -1,5 +1,3 @@
-"use client";
-
 export type PlayerTileProps = {
   name: string;
   emoji: string;

@@ -1,6 +1,3 @@
-"use client";
-import React from "react";
-
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;

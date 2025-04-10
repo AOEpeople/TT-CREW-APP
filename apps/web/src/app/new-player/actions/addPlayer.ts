@@ -1,10 +1,9 @@
 "use server";
 
-import { db } from "@/db";
-import * as schema from "@/db/schema";
-import * as z from "zod";
-import { redirect } from "next/navigation";
 import { formDataToObject } from "@/lib/formDataToObject";
+import { redirect } from "next/navigation";
+import * as z from "zod";
+import { gameCore } from "@/lib/gameCore";
 
 const inputSchema = z.object({
   name: z.string({ required_error: "Name is required" }),
@@ -14,21 +13,11 @@ const inputSchema = z.object({
 export default async function addPlayer(formData: FormData) {
   const { name, emoji } = inputSchema.parse(formDataToObject(formData));
 
-  const players = await db.query.players.findMany();
-
-  if (players.some((player) => player.name === name && player.emoji === emoji)) {
-    console.log("hier geht er net rein");
-  }
-
-  await db
-    .insert(schema.players)
-    .values({
-      name: name,
-      emoji: emoji,
-      createdAt: new Date(),
-      createdBy: 1,
-    })
-    .execute();
+  await gameCore.addPlayer({
+    name,
+    emoji,
+    createdBy: 1, // Hardcoded for now, should be replaced with actual user ID
+  });
 
   redirect("/game");
 }
