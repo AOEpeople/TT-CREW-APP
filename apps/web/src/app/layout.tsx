@@ -19,12 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body 
-        className={inter.className + "text-foreground"}
-        style={{
-          background: "linear-gradient(160deg, #0d1b2a, #1b263b, #415a77, #778da9)",
-          backgroundAttachment: "fixed",
-          minHeight: "100vh",
-        }}
+        className={`${inter.className} text-foreground bg-gradient-to-br from-[#0d1b2a] via-[#1b263b] via-[#415a77] to-[#778da9] bg-fixed min-h-screen`}
       >
         {children}
       <Toaster />
