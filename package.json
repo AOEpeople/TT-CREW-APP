@@ -2,6 +2,10 @@
   "name": "tt-crew-app",
   "private": true,
   "type": "module",
+  "engines": {
+    "bun": "1.2.9",
+    "node": "22"
+  },
   "scripts": {
     "build": "bun run build:core && bun run build:web",
     "build:core": "bun run --cwd packages/core build",

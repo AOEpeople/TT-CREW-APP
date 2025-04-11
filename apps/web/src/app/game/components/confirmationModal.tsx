@@ -14,7 +14,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/55 overflow-y-auto h-full w-full flex justify-center items-center z-50">
       <div className="bg-slate-800 p-6 w-full max-w-md mx-auto rounded-lg shadow-xl modal-responsive">
         <h2 className="text-xl font-semibold mb-4 text-center text-white">
           🎉Bitte bestätige🎉

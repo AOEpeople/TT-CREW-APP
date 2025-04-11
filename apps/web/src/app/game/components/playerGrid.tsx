@@ -1,24 +1,39 @@
 "use client";
 
-import {addMatch} from "../actions/addMatch";
 import { useEffect, useState } from "react";
-import PlayerTile from "./playerTile";
-import { ConfirmationModal } from "./confirmationModal";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { Database, Wifi, WifiOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type { Player } from "@/types";
+
+// Import components
+import PlayerFilter from "./PlayerFilter";
+import PlayerSelection from "./PlayerSelection";
+import PlayerList from "./PlayerList";
+import { ConfirmationModal } from "./confirmationModal";
+
+// Import utilities
+import { getOfflinePlayers, writeOfflinePlayers } from "../utils/playerStorage";
+import { getConfirmationMessage } from "../utils/gameUtils";
+import { useMatchSaving } from "../hooks/useMatchSaving";
+import { useOfflineMatches, getUnsyncedMatches } from "../context/offlineMatchesContext";
 
 interface PlayerGridProps {
   players?: Player[];
 }
 
 export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
+  const router = useRouter();
+  const { saveMatch, isOnlineMode, setOnlineMode } = useMatchSaving();
+  const { state } = useOfflineMatches();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMultiSelection, setIsMultiSelection] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
-
   const [filter, setFilter] = useState("");
+
+  const unsyncedMatches = getUnsyncedMatches(state.matches);
 
   const handlePlayerClick = (player: Player) => {
     if (isMultiSelection) {
@@ -35,6 +50,7 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
       setIsModalOpen(true);
     }
   };
+
   useEffect(() => {
     if (!props.players) {
       toast.error("Lol DB mal wieder kaputt, nehme offline Backup", {
@@ -50,89 +66,79 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
     return <p>Keine Spieler gefunden, sowohl online, als auch offline</p>;
   }
 
-  const handleConfirm = () => {
-    sendWinnerToDB(selectedPlayers[0], selectedPlayers[1]);
-    setSelectedPlayers([]);
-    setIsModalOpen(false);
+  const handleConfirm = async () => {
+    try {
+      // Use the strategy context to save the match
+      await saveMatch(selectedPlayers[0], selectedPlayers[1]);
+      setSelectedPlayers([]);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to save match:", error);
+      toast.error("Fehler beim Speichern des Sieges. Bitte später erneut versuchen.");
+    }
   };
-
-  const currentOfflinePlayerMatches: OfflinePlayerMatch[] = typeof window !== 'undefined' 
-    ? JSON.parse(localStorage.getItem("playerMatches") || "[]")
-    : [];
 
   return (
     <div className="flex justify-center flex-col gap-3 p-3 ">
-      <div className="flex gap-3 justify-end items-center">
-        <span className="text-white font-medium">Losers Cup</span>
-        <Switch
-          onClick={() => {
-            setIsMultiSelection((isMultiSelection) => !isMultiSelection);
-            setSelectedPlayers([]);
-          }}
-        />
-      </div>
-      {isMultiSelection && (
-        <div className="bg-slate-800/50 p-3 rounded-md border border-slate-700">
-          <p className="text-white font-medium mb-1">Wähle zwei Spieler aus, die gewonnen haben</p>
-          <p className="text-slate-300 text-sm mb-2">
-            {selectedPlayers.length === 0 
-              ? "Noch keine Spieler ausgewählt" 
-              : selectedPlayers.length === 1 
-                ? "Noch ein Spieler auswählen" 
-                : "Beide Spieler ausgewählt"}
-          </p>
-          <div className="flex items-center gap-2 min-h-[32px]">
-            {selectedPlayers.length > 0 ? (
+      <div className="flex items-center justify-between mb-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 text-slate-300"
+          onClick={() => router.push("/game/offline-matches")}
+          notification={unsyncedMatches.length > 0}
+        >
+          <Database size={16} />
+          Offline Siege
+        </Button>
+
+        <div className="flex gap-3 items-center">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className={`gap-2 ${isOnlineMode ? 'text-green-400' : 'text-yellow-400'}`}
+            onClick={() => setOnlineMode(!isOnlineMode)}
+          >
+            {isOnlineMode ? (
               <>
-                <span className="text-slate-300 text-sm">Ausgewählte Spieler:</span>
-                <div className="flex gap-2">
-                  {selectedPlayers.map((player, index) => (
-                    <div 
-                      key={player.id} 
-                      className={`px-2 py-1 rounded text-sm ${
-                        index === 0 
-                          ? "bg-yellow-600/70 text-white font-medium" 
-                          : "bg-slate-700/70 text-slate-300"
-                      }`}
-                    >
-                      {player.name} {player.emoji}
-                    </div>
-                  ))}
-                </div>
+                <Wifi size={16} />
+                Online Modus
               </>
             ) : (
-              <span className="text-slate-400 text-sm italic">Keine Spieler ausgewählt</span>
+              <>
+                <WifiOff size={16} />
+                Offline Modus
+              </>
             )}
-          </div>
+          </Button>
+          
+          <span className="text-white font-medium">Losers Cup</span>
+          <Switch
+            onClick={() => {
+              setIsMultiSelection((isMultiSelection) => !isMultiSelection);
+              setSelectedPlayers([]);
+            }}
+          />
         </div>
-      )}
-      <Input
-        type="text"
-        name="filter"
-        placeholder="Spieler suchen..."
-        required
+      </div>
+
+      <PlayerSelection 
+        isMultiSelection={isMultiSelection}
+        selectedPlayers={selectedPlayers}
+      />
+      
+      <PlayerFilter
         value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus-visible:ring-slate-500"
+        onChange={setFilter}
       />
 
-      <div className="flex flex-wrap gap-10 justify-center">
-        {players
-          .filter((player) =>
-            player.name.toLowerCase().includes(filter.toLowerCase()),
-          )
-          .toSorted((a, b) => a.priority - b.priority)
-          .map((player) => (
-            <PlayerTile
-              key={player.id}
-              name={player.name}
-              selected={selectedPlayers.includes(player)}
-              selectionIndex={selectedPlayers.findIndex(p => p.id === player.id)}
-              emoji={player.emoji || "👾"}
-              onClick={() => handlePlayerClick(player)}
-            />
-          ))}
-      </div>
+      <PlayerList
+        players={players}
+        filterText={filter}
+        selectedPlayers={selectedPlayers}
+        onPlayerClick={handlePlayerClick}
+      />
+
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}
@@ -144,108 +150,6 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
           message={getConfirmationMessage(selectedPlayers)}
         />
       )}
-      {currentOfflinePlayerMatches.length > 0 && (
-        <div>
-          <h3>Offline gespeicherte Siege:</h3>
-          <ul>
-            {currentOfflinePlayerMatches.map((playerMatch) => (
-              <li key={playerMatch.timestamp}>
-                {playerMatch.displayName} - {playerMatch.timestamp}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }
-
-function getOfflinePlayers(): Player[] | undefined {
-  if (typeof window === "undefined") return undefined;  
-  try {
-    const offlinePlayerJSON = localStorage.getItem("playerBackup");
-    if (!offlinePlayerJSON) return undefined;
-    return JSON.parse(offlinePlayerJSON) as Player[];
-  } catch (e) {
-    console.error("Error while reading offline players", e);
-    return undefined;
-  }
-}
-
-function writeOfflinePlayers(players: Player[]) {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("playerBackup", JSON.stringify(players));
-  }
-}
-
-function getConfirmationMessage(selectedPlayers: Player[]) {
-  if (selectedPlayers.length === 1) {
-    return `Hat ${selectedPlayers[0].name} gewonnen?`;
-  } else if (selectedPlayers.length === 2) {
-    return `Haben ${selectedPlayers[0].name} und ${selectedPlayers[1].name} gewonnen?`;
-  }
-  return "Hier ist irgendwas schiefgelaufen";
-}
-
-function sendWinnerToDB(winner1: Player, winner2?: Player) {
-  const formData = new FormData();
-  formData.append("winnerId1", winner1.id.toString());
-  if (winner2) {
-    formData.append("winnerId2", winner2.id.toString());
-  }
-  console.log(
-    "sending Formdata:",
-    formData.keys().next().value,
-    formData.entries().next().value,
-  );
-  const addPlayerAndToast = (i = 1) => {
-    if (i === 4) {
-      toast.error(
-        "Der Server scheint nicht zu funktionieren, der Punkt wird erstmal offline gespeichert.",
-        { dismissible: true },
-      );
-      writePlayerMatchToLocalStorage(winner1);
-      if (winner2) {
-        writePlayerMatchToLocalStorage(winner2);
-      }
-    } else {
-      const addMatchPromise = addMatch(formData);
-      toast.promise(addMatchPromise, {
-        closeButton: true,
-        loading:
-          i == 1
-            ? `Versuche Sieg einzutragen...`
-            : `Dann probieren wir es noch ein ${i}tes Mal, den Sieg einzutragen...`,
-        success: `Glückwunsch! Cola und Fortnite für ${winner1.name}${winner1.emoji} ${winner2 ? " und " + winner2.name + winner2.emoji : ""}`,
-        error: () => {
-          addPlayerAndToast(i + 1);
-          return `Fehler beim ${i}ten Versuch, ${winner1.name}${winner1.emoji} einzutragen...`;
-        },
-      });
-    }
-  };
-  addPlayerAndToast();
-}
-
-const writePlayerMatchToLocalStorage = (player: Player) => {
-  if (typeof window === 'undefined') return;
-  const playerMatch = {
-    player: player.id,
-    displayName: player.name + player.emoji,
-    timestamp: new Date().toISOString(),
-  };
-  const playerMatches: OfflinePlayerMatch[] = JSON.parse(
-    localStorage.getItem("playerMatches") ?? "[]",
-  );
-  playerMatches.push(playerMatch);
-  localStorage.setItem("playerMatches", JSON.stringify(playerMatches));
-  toast.success(`Sieg von ${player.name}${player.emoji} offline gespeichert`, {
-    duration: 2000,
-  });
-};
-
-type OfflinePlayerMatch = {
-  player: number;
-  displayName: string;
-  timestamp: string;
-};
