@@ -1,19 +1,16 @@
 "use client";
 
-import { ReactNode } from "react";
-import { OfflineMatchesProvider } from "./context/offlineMatchesContext";
-import { MatchSavingProvider } from "./hooks/useMatchSaving";
+import { Toaster } from "sonner";
 
-interface GameLayoutProps {
-  children: ReactNode;
-}
-
-export default function GameLayout({ children }: GameLayoutProps) {
+export default function GameLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <OfflineMatchesProvider>
-      <MatchSavingProvider>
-        {children}
-      </MatchSavingProvider>
-    </OfflineMatchesProvider>
+    <>
+      {children}
+      <Toaster />
+    </>
   );
 } 

@@ -5,9 +5,10 @@ import { Match } from "../models/match";
 import { Player } from "../models/player";
 
 export interface AddMatchInput {
-  winnerId1: number;
-  winnerId2?: number;
+  winnerIds: number[];
+  loserIds?: number[];
   enteredBy: number;
+  timestamp?: Date;
 }
 
 export class MatchRepository {
@@ -19,31 +20,35 @@ export class MatchRepository {
       const matchResult = await tx
         .insert(schema.matches)
         .values({
-          createdAt: new Date(),
+          createdAt: input.timestamp || new Date(),
           enteredBy: input.enteredBy,
         })
         .returning({ id: schema.matches.id });
       
       const matchId = matchResult[0].id;
       
-      // Add first winner
-      await tx
-        .insert(schema.playerMatches)
-        .values({
-          type: "WON",
-          match: matchId,
-          player: input.winnerId1,
-        });
-      
-      // Add second winner if provided
-      if (input.winnerId2) {
+      // Add all winners
+      for (const winnerId of input.winnerIds) {
         await tx
           .insert(schema.playerMatches)
           .values({
             type: "WON",
             match: matchId,
-            player: input.winnerId2,
+            player: winnerId,
           });
+      }
+      
+      // Add all losers if provided
+      if (input.loserIds) {
+        for (const loserId of input.loserIds) {
+          await tx
+            .insert(schema.playerMatches)
+            .values({
+              type: "LOST",
+              match: matchId,
+              player: loserId,
+            });
+        }
       }
       
       return matchId;

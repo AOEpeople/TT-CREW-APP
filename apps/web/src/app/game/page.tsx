@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import PlayerGrid from "./components/playerGrid";
-import { gameCore } from "@/lib/gameCore";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Suspense } from "react";
+import { gameCore } from "@/lib/gameCore";
 
 export default async function Page() {
+
 
   const players = await gameCore.getActivePlayers();
 

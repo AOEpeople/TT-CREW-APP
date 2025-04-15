@@ -1,40 +1,38 @@
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
   message: string;
+  isSaving?: boolean;
 }
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  message,
-}) => {
+export function ConfirmationModal({ isOpen, onClose, onConfirm, message, isSaving = false }: ConfirmationModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/55 overflow-y-auto h-full w-full flex justify-center items-center z-50">
-      <div className="bg-slate-800 p-6 w-full max-w-md mx-auto rounded-lg shadow-xl modal-responsive">
-        <h2 className="text-xl font-semibold mb-4 text-center text-white">
-          🎉Bitte bestätige🎉
-        </h2>
-        <p className="text-gray-300 text-center mb-6">{message}</p>
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={onConfirm}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 text-sm rounded transition-colors duration-300"
-          >
-            Ja
-          </button>
-          <button
-            onClick={onClose}
-            className="border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-bold text-sm py-2 px-4 rounded transition-colors duration-300"
-          >
-            Nein
-          </button>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-slate-800 p-6 rounded-lg max-w-md w-full mx-4">
+        <h2 className="text-xl font-bold text-white mb-4">Sieg bestätigen</h2>
+        <p className="text-slate-300 mb-6">{message}</p>
+        <div className="flex justify-end gap-3">
+          <Button variant="ghost" onClick={onClose} disabled={isSaving}>
+            Abbrechen
+          </Button>
+          <Button onClick={onConfirm} disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Speichere...
+              </>
+            ) : (
+              "Bestätigen"
+            )}
+          </Button>
         </div>
       </div>
     </div>
   );
-};
+}

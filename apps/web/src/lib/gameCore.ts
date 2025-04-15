@@ -1,5 +1,4 @@
-// This module is server-only and should not be imported in client components
-//import "server-only";
+import "server-only";
 
 import { TTGameCore } from "@tt-crew/core";
 import { Resource } from "sst";

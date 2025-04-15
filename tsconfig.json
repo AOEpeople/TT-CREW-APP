@@ -1,16 +1,14 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "declaration": true,
-    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "composite": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+    "baseUrl": ".",
+    "paths": {
+      "@tt-crew/core": ["./packages/core/src"]
+    }
+  }
 } 

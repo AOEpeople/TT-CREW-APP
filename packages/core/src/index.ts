@@ -6,10 +6,10 @@ import { AddMatchInput } from "./repositories/matchRepository";
 import { AddPlayerInput } from "./repositories/playerRepository";
 import { MonthResultWithPlayer } from "./repositories/monthResultRepository";
 
-export type { Player, Match, AddMatchInput, AddPlayerInput, MonthResultWithPlayer };
+export type { Player, Match, AddMatchInput, AddPlayerInput, MonthResultWithPlayer,DatabaseConfig };
 
 export class TTGameCore {
-  private gameService: GameService;
+  private readonly gameService: GameService;
 
   constructor(config: DatabaseConfig) {
     const db = createDatabase(config);

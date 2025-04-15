@@ -7,14 +7,11 @@
     "node": "22"
   },
   "scripts": {
-    "build": "bun run build:core && bun run build:web",
-    "build:core": "bun run --cwd packages/core build",
+    "build": "bun run build:web",
     "build:web": "bun run --cwd apps/web build",
-    "dev": "concurrently \"bun run dev:core\" \"bun run dev:web\"",
-    "dev:core": "bun run --cwd packages/core dev",
+    "dev": "bun run dev:web",
     "dev:web": "bun run --cwd apps/web dev",
-    "clean": "bun run clean:core && bun run clean:web",
-    "clean:core": "bun run --cwd packages/core clean",
+    "clean": "bun run clean:web",
     "clean:web": "rm -rf apps/web/.next",
     "lint": "pnpm -r lint",
     "db:generate": "pnpm --filter @tt-crew-app/web db:generate",
@@ -52,5 +49,8 @@
   "trustedDependencies": [
     "aws-sdk",
     "es5-ext"
-  ]
+  ],
+  "dependencies": {
+    "zustand": "5.0.3"
+  }
 }

@@ -1,18 +1,37 @@
 "use server";
 import { formDataToObject } from "@/lib/formDataToObject";
+import { gameCore } from "@/lib/gameCore";
 import { revalidatePath } from "next/cache";
-import { addMatch as addMatchToCore } from "@/lib/server/gameCore";
 
 export async function addMatch(formData: FormData) {
+  
   try {
     const data = formDataToObject(formData);
-    const winnerId1 = Number(data.winnerId1);
-    const winnerId2 = data.winnerId2 ? Number(data.winnerId2) : undefined;
     
-    await addMatchToCore({
-      winnerId1,
-      winnerId2,
+    // Parse winner IDs from form data
+    const winnerIds = [];
+    let i = 1;
+    while (data[`winnerId${i}`]) {
+      winnerIds.push(Number(data[`winnerId${i}`]));
+      i++;
+    }
+    
+    // Parse loser IDs from form data if they exist
+    const loserIds = [];
+    i = 1;
+    while (data[`loserId${i}`]) {
+      loserIds.push(Number(data[`loserId${i}`]));
+      i++;
+    }
+    
+    // Parse timestamp if provided
+    const timestamp = data.timestamp ? new Date(data.timestamp as string) : undefined;
+    
+    await gameCore.addMatch({
+      winnerIds,
+      loserIds: loserIds.length > 0 ? loserIds : undefined,
       enteredBy: 1, // Hardcoded for now, should be replaced with actual user ID
+      timestamp,
     });
 
     revalidatePath("/game");

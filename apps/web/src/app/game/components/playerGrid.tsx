@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Database, Wifi, WifiOff } from "lucide-react";
+import { Database, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Player } from "@/types";
 
@@ -17,8 +17,8 @@ import { ConfirmationModal } from "./confirmationModal";
 // Import utilities
 import { getOfflinePlayers, writeOfflinePlayers } from "../utils/playerStorage";
 import { getConfirmationMessage } from "../utils/gameUtils";
-import { useMatchSaving } from "../hooks/useMatchSaving";
-import { useOfflineMatches, getUnsyncedMatches } from "../context/offlineMatchesContext";
+import { useSaveMatch } from "../hooks/useSaveMatch";
+import { useOfflineMatchesStore } from "../stores/offlineMatchesStore";
 
 interface PlayerGridProps {
   players?: Player[];
@@ -26,14 +26,14 @@ interface PlayerGridProps {
 
 export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
   const router = useRouter();
-  const { saveMatch, isOnlineMode, setOnlineMode } = useMatchSaving();
-  const { state } = useOfflineMatches();
+  const { saveMatch, isSaving } = useSaveMatch();
+  const { matches } = useOfflineMatchesStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMultiSelection, setIsMultiSelection] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [filter, setFilter] = useState("");
 
-  const unsyncedMatches = getUnsyncedMatches(state.matches);
+  const unsyncedMatches = matches.filter(match => !match.synced);
 
   const handlePlayerClick = (player: Player) => {
     if (isMultiSelection) {
@@ -68,8 +68,7 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
 
   const handleConfirm = async () => {
     try {
-      // Use the strategy context to save the match
-      await saveMatch(selectedPlayers[0], selectedPlayers[1]);
+      await saveMatch(selectedPlayers, [], new Date());
       setSelectedPlayers([]);
       setIsModalOpen(false);
     } catch (error) {
@@ -93,25 +92,6 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
         </Button>
 
         <div className="flex gap-3 items-center">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            className={`gap-2 ${isOnlineMode ? 'text-green-400' : 'text-yellow-400'}`}
-            onClick={() => setOnlineMode(!isOnlineMode)}
-          >
-            {isOnlineMode ? (
-              <>
-                <Wifi size={16} />
-                Online Modus
-              </>
-            ) : (
-              <>
-                <WifiOff size={16} />
-                Offline Modus
-              </>
-            )}
-          </Button>
-          
           <span className="text-white font-medium">Losers Cup</span>
           <Switch
             onClick={() => {
@@ -148,6 +128,7 @@ export default function PlayerGrid(props: Readonly<PlayerGridProps>) {
           }}
           onConfirm={handleConfirm}
           message={getConfirmationMessage(selectedPlayers)}
+          isSaving={isSaving}
         />
       )}
     </div>
