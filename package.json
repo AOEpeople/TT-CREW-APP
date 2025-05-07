@@ -7,24 +7,27 @@
     "node": "22"
   },
   "scripts": {
-    "build": "bun run build:web",
+    "build": "bun run build:core && bun run build:web",
+    "build:core": "bun run --cwd packages/core build",
     "build:web": "bun run --cwd apps/web build",
-    "dev": "bun run dev:web",
+    "dev": "concurrently \"bun run dev:core\" \"bun run dev:web\"",
+    "dev:core": "bun run --cwd packages/core dev",
     "dev:web": "bun run --cwd apps/web dev",
-    "clean": "bun run clean:web",
+    "clean": "bun run clean:core && bun run clean:web",
+    "clean:core": "bun run --cwd packages/core clean",
     "clean:web": "rm -rf apps/web/.next",
-    "lint": "pnpm -r lint",
-    "db:generate": "pnpm --filter @tt-crew-app/web db:generate",
-    "db:migrate": "pnpm --filter @tt-crew-app/web db:migrate",
-    "db:push": "pnpm --filter @tt-crew-app/web db:push",
-    "db:push:remote": "pnpm --filter @tt-crew-app/web db:push:remote",
-    "db:studio": "pnpm --filter @tt-crew-app/web db:studio",
+    "lint": "bun -r lint",
+    "db:generate": "bun --filter @tt-crew-app/web db:generate",
+    "db:migrate": "bun --filter @tt-crew-app/web db:migrate",
+    "db:push": "bun --filter @tt-crew-app/web db:push",
+    "db:push:remote": "bun --filter @tt-crew-app/web db:push:remote",
+    "db:studio": "bun --filter @tt-crew-app/web db:studio",
     "infra:dev": "sst dev",
     "infra:build": "sst build",
     "infra:deploy": "sst deploy",
     "infra:remove": "sst remove",
     "infra:console": "sst console"
-  },
+  }, 
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@next/eslint-plugin-next": "^15.3.0",
@@ -34,7 +37,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-sonarjs": "^3.0.2",
     "globals": "^16.0.0",
-    "sst": "^3.13.7",
+    "sst": "3.4.59",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.29.1"
   },
@@ -50,7 +53,5 @@
     "aws-sdk",
     "es5-ext"
   ],
-  "dependencies": {
-    "zustand": "5.0.3"
-  }
+  "dependencies": {}
 }

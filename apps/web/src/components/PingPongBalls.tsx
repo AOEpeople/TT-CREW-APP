@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 interface Ball {
   id: number;
@@ -12,6 +12,42 @@ interface Ball {
   rotation: number;
   rotationSpeed: number;
 }
+
+const updateBall = (
+  ball: Ball,
+  deltaTime: number,
+  windowWidth: number,
+  windowHeight: number
+): Ball => {
+  // Update position with deltaTime to ensure consistent speed
+  let newX = ball.x + ball.speedX * deltaTime;
+  let newY = ball.y + ball.speedY * deltaTime;
+  let newSpeedX = ball.speedX;
+  let newSpeedY = ball.speedY;
+
+  // Bounce off walls
+  if (newX <= 0 || newX >= windowWidth) {
+    newSpeedX = -ball.speedX;
+    newX = newX <= 0 ? 0 : windowWidth;
+  }
+
+  if (newY <= 0 || newY >= windowHeight) {
+    newSpeedY = -ball.speedY;
+    newY = newY <= 0 ? 0 : windowHeight;
+  }
+
+  // Update rotation with deltaTime
+  const newRotation = ball.rotation + ball.rotationSpeed * deltaTime;
+
+  return {
+    ...ball,
+    x: newX,
+    y: newY,
+    speedX: newSpeedX,
+    speedY: newSpeedY,
+    rotation: newRotation,
+  };
+};
 
 export default function PingPongBalls() {
   const [balls, setBalls] = useState<Ball[]>([]);
@@ -31,18 +67,25 @@ export default function PingPongBalls() {
     for (let i = 0; i < numBalls; i++) {
       initialBalls.push({
         id: i,
+        // eslint-disable-next-line sonarjs/pseudo-random
         x: Math.random() * windowSize.width,
+        // eslint-disable-next-line sonarjs/pseudo-random
         y: Math.random() * windowSize.height,
+        // eslint-disable-next-line sonarjs/pseudo-random
         size: Math.random() * 20 + 10, // Random size between 10 and 30
+        // eslint-disable-next-line sonarjs/pseudo-random
         speedX: (Math.random() - 0.5) * 5, // Reduced speed multiplier from 2 to 0.5
+        // eslint-disable-next-line sonarjs/pseudo-random
         speedY: (Math.random() - 0.5) * 5, // Reduced speed multiplier from 2 to 0.5
+        // eslint-disable-next-line sonarjs/pseudo-random
         rotation: Math.random() * 360, // Random initial rotation
+        // eslint-disable-next-line sonarjs/pseudo-random
         rotationSpeed: (Math.random() - 0.5) * 1, // Reduced rotation speed from 5 to 1
       });
     }
 
     setBalls(initialBalls);
-  }, []);
+  }, [windowSize.width, windowSize.height]);
 
   // Handle window resize
   useEffect(() => {
@@ -57,61 +100,34 @@ export default function PingPongBalls() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const animate = useCallback((timestamp: number) => {
+    // Initialize lastTime if it's the first frame
+    if (lastTimeRef.current === null) {
+      lastTimeRef.current = timestamp;
+      requestAnimationFrame(animate);
+      return;
+    }
+
+    // Calculate time elapsed since last frame in seconds
+    const deltaTime = (timestamp - lastTimeRef.current) / 16.67; // Normalize to ~60fps
+    lastTimeRef.current = timestamp;
+
+    setBalls((prevBalls) =>
+      prevBalls.map((ball) =>
+        updateBall(ball, deltaTime, windowSize.width, windowSize.height)
+      )
+    );
+
+    requestAnimationFrame(animate);
+  }, [windowSize.width, windowSize.height]);
+
   // Animate balls with time-based animation
   useEffect(() => {
     if (balls.length === 0) return;
 
     const animationFrame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrame);
-
-    function animate(timestamp: number) {
-      // Initialize lastTime if it's the first frame
-      if (lastTimeRef.current === null) {
-        lastTimeRef.current = timestamp;
-        requestAnimationFrame(animate);
-        return;
-      }
-
-      // Calculate time elapsed since last frame in seconds
-      const deltaTime = (timestamp - lastTimeRef.current) / 16.67; // Normalize to ~60fps
-      lastTimeRef.current = timestamp;
-
-      setBalls((prevBalls) => {
-        return prevBalls.map((ball) => {
-          // Update position with deltaTime to ensure consistent speed
-          let newX = ball.x + ball.speedX * deltaTime;
-          let newY = ball.y + ball.speedY * deltaTime;
-          let newSpeedX = ball.speedX;
-          let newSpeedY = ball.speedY;
-
-          // Bounce off walls
-          if (newX <= 0 || newX >= windowSize.width) {
-            newSpeedX = -ball.speedX;
-            newX = newX <= 0 ? 0 : windowSize.width;
-          }
-
-          if (newY <= 0 || newY >= windowSize.height) {
-            newSpeedY = -ball.speedY;
-            newY = newY <= 0 ? 0 : windowSize.height;
-          }
-
-          // Update rotation with deltaTime
-          const newRotation = ball.rotation + ball.rotationSpeed * deltaTime;
-
-          return {
-            ...ball,
-            x: newX,
-            y: newY,
-            speedX: newSpeedX,
-            speedY: newSpeedY,
-            rotation: newRotation,
-          };
-        });
-      });
-
-      requestAnimationFrame(animate);
-    }
-  }, [balls, windowSize]);
+  }, [balls, animate]);
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -127,9 +143,7 @@ export default function PingPongBalls() {
             transform: `rotate(${ball.rotation}deg)`,
             boxShadow: '0 0 10px rgba(255, 255, 255, 0.5)',
           }}
-        >
-          
-        </div>
+        />
       ))}
     </div>
   );

@@ -1,8 +1,9 @@
 /// <reference path="../.sst/platform/config.d.ts" />
 
-export const web = (secrets: any[]) => {
+export const web = (secrets: unknown[]) => {
   return new sst.aws.Nextjs("TT-Nextjs", {
     link: secrets,
+    path: "apps/web",
     domain:
       $app.stage === "production"
         ? "tt-crew.app"

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Database, Loader2 } from "lucide-react";
+import { Database } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Player } from "@/types";
 
