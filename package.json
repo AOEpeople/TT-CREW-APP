@@ -27,7 +27,7 @@
     "infra:deploy": "sst deploy",
     "infra:remove": "sst remove",
     "infra:console": "sst console"
-  }, 
+  },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@next/eslint-plugin-next": "^15.3.0",
@@ -37,7 +37,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-sonarjs": "^3.0.2",
     "globals": "^16.0.0",
-    "sst": "3.4.59",
+    "sst": "3.14.11",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.29.1"
   },
@@ -52,6 +52,5 @@
   "trustedDependencies": [
     "aws-sdk",
     "es5-ext"
-  ],
-  "dependencies": {}
+  ]
 }

@@ -2,17 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /* deno-fmt-ignore-file */
+
+/// <reference path="../../sst-env.d.ts" />
+
 import "sst"
 export {}
-declare module "sst" {
-  export interface Resource {
-    "TURSO_AUTH_TOKEN": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "TURSO_DATABASE_URL": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-  }
-}
