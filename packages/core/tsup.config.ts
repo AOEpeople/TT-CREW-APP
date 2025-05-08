@@ -17,10 +17,6 @@ export default defineConfig({
   splitting: true,
   sourcemap: true,
   minify: process.env.NODE_ENV === 'production',
-  external: [
-    '@libsql/client',
-    'drizzle-orm'
-  ],
   tsconfig: './tsconfig.json',
   treeshake: true
 }) 

@@ -106,6 +106,10 @@ export default async function ScoreBoard({
 }: {
   readonly params: Promise<{ yearMonth: string }>;
 }) {
+
+  console.log("rendering scoreboard");
+
+
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
