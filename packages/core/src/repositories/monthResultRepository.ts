@@ -1,6 +1,5 @@
 import { and, count, desc, eq, gt, lt } from "drizzle-orm";
-import { LibSQLDatabase } from "drizzle-orm/libsql";
-import { schema } from "../db";
+import { schema, type TTGameDatabase } from "../db";
 
 export interface MonthResultWithPlayer {
   id: number;
@@ -10,7 +9,7 @@ export interface MonthResultWithPlayer {
 }
 
 export class MonthResultRepository {
-  constructor(private db: LibSQLDatabase<typeof schema>) {}
+  constructor(private db: TTGameDatabase) {}
 
   async getMonthResult(date: Date): Promise<MonthResultWithPlayer[]> {
     try {

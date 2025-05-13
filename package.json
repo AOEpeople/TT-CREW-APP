@@ -4,42 +4,23 @@
   "type": "module",
   "engines": {
     "bun": "1.2.9",
-    "node": "22"
+    "node": "20"
   },
   "scripts": {
     "build": "bun run build:core && bun run build:web",
-    "build:core": "bun run --cwd packages/core build",
     "build:web": "bun run --cwd apps/web build",
     "dev": "concurrently \"bun run dev:core\" \"bun run dev:web\"",
     "dev:core": "bun run --cwd packages/core dev",
     "dev:web": "bun run --cwd apps/web dev",
-    "clean": "bun run clean:core && bun run clean:web",
-    "clean:core": "bun run --cwd packages/core clean",
-    "clean:web": "rm -rf apps/web/.next",
-    "lint": "bun -r lint",
     "db:generate": "bun --filter @tt-crew-app/web db:generate",
     "db:migrate": "bun --filter @tt-crew-app/web db:migrate",
     "db:push": "bun --filter @tt-crew-app/web db:push",
     "db:push:remote": "bun --filter @tt-crew-app/web db:push:remote",
-    "db:studio": "bun --filter @tt-crew-app/web db:studio",
-    "infra:dev": "sst dev",
-    "infra:build": "sst build",
-    "infra:deploy": "sst deploy",
-    "infra:remove": "sst remove",
-    "infra:console": "sst console"
+    "db:studio": "bun --filter @tt-crew-app/web db:studio"
   },
   "devDependencies": {
-    "@eslint/js": "^9.24.0",
     "@next/eslint-plugin-next": "^15.3.0",
-    "concurrently": "^8.2.2",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-sonarjs": "^3.0.2",
-    "globals": "^16.0.0",
-    "sst": "3.14.11",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.29.1"
+    "sst": "3.14.11"
   },
   "resolutions": {
     "@types/react": "19.0.8",

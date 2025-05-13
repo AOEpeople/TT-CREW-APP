@@ -1,8 +1,7 @@
-import { LibSQLDatabase } from "drizzle-orm/libsql";
-import { schema } from "../db";
+import { schema, type TTGameDatabase } from "../db";
 
 export class UserRepository {
-  constructor(private db: LibSQLDatabase<typeof schema>) {}
+  constructor(private db: TTGameDatabase) {}
 
   async getOrCreateDefaultUser(): Promise<{ id: number; username: string }> {
     const user = await this.db.query.users.findFirst();

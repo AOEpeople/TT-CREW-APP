@@ -1,6 +1,5 @@
 import { eq } from "drizzle-orm";
-import { LibSQLDatabase } from "drizzle-orm/libsql";
-import { schema } from "../db";
+import { schema, type TTGameDatabase } from "../db";
 import { Player } from "../models/player";
 
 export interface AddPlayerInput {
@@ -10,7 +9,7 @@ export interface AddPlayerInput {
 }
 
 export class PlayerRepository {
-  constructor(private db: LibSQLDatabase<typeof schema>) {}
+  constructor(private db: TTGameDatabase) {}
 
   async getAllPlayers(): Promise<Player[]> {
     const players = await this.db.select().from(schema.players);

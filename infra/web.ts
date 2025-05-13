@@ -3,7 +3,7 @@
 export const web = (secrets: unknown[]) => {
   return new sst.aws.Nextjs("TT-Nextjs", {
     link: secrets,
-    path: "apps/web",
+    path: "apps/tabletennis-web",
     domain:
       $app.stage === "production"
         ? "tt-crew.app"

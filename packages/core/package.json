@@ -2,30 +2,15 @@
   "name": "@tt-crew/core",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "clean": "rm -rf dist"
-  },
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "dependencies": {
-    "@libsql/client": "0.15.4",
-    "drizzle-orm": "^0.29.3"
+    "@libsql/client": "^0.15.4",
+    "drizzle-orm": "^0.43.1",
+    "sst": "3.14.14"
   },
   "devDependencies": {
-    "@types/node": "^20.11.19",
-    "bun-types": "^1.0.25",
-    "concurrently": "9.1.2",
-    "drizzle-kit": "^0.20.14",
-    "tsup": "8.4.0",
+    "drizzle-kit": "0.31.1",
     "typescript": "^5.3.3"
   }
 }

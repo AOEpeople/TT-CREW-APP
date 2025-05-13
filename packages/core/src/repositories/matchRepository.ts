@@ -1,6 +1,5 @@
 import { eq } from "drizzle-orm";
-import { LibSQLDatabase } from "drizzle-orm/libsql";
-import { schema } from "../db";
+import { schema, type TTGameDatabase } from "../db";
 import { Match } from "../models/match";
 import { Player } from "../models/player";
 
@@ -12,7 +11,7 @@ export interface AddMatchInput {
 }
 
 export class MatchRepository {
-  constructor(private db: LibSQLDatabase<typeof schema>) {}
+  constructor(private db: TTGameDatabase) {}
 
   async addMatch(input: AddMatchInput): Promise<Match> {
     // Insert the match and the playerMatches as a transaction to ensure consistency

@@ -1,5 +1,4 @@
-import { LibSQLDatabase } from "drizzle-orm/libsql";
-import { schema } from "../db";
+import { type TTGameDatabase } from "../db";
 import { Match } from "../models/match";
 import { Player } from "../models/player";
 import { AddMatchInput, MatchRepository } from "../repositories/matchRepository";
@@ -13,7 +12,7 @@ export class GameService {
   private monthResultRepository: MonthResultRepository;
   private userRepository: UserRepository;
 
-  constructor(db: LibSQLDatabase<typeof schema>) {
+  constructor(db: TTGameDatabase) {
     this.matchRepository = new MatchRepository(db);
     this.playerRepository = new PlayerRepository(db);
     this.monthResultRepository = new MonthResultRepository(db);

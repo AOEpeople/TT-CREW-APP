@@ -1,4 +1,4 @@
-import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/libsql/web";
 import { createClient } from "@libsql/client/web";
 import * as schema from "./schema";
 
@@ -7,7 +7,7 @@ export interface DatabaseConfig {
   authToken?: string;
 }
 
-export function createDatabase(config: DatabaseConfig): LibSQLDatabase<typeof schema> {
+export function createDatabase(config: DatabaseConfig){
   const client = createClient({
     url: config.url,
     authToken: config.authToken,
@@ -15,5 +15,7 @@ export function createDatabase(config: DatabaseConfig): LibSQLDatabase<typeof sc
 
   return drizzle(client, { schema });
 }
+
+export type TTGameDatabase = ReturnType<typeof createDatabase>;
 
 export { schema }; 
