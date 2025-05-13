@@ -12,12 +12,11 @@ export default [
   { files: ["src/**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   {
     ignores: [
-      "node_modules",
-      ".next",
-      "drizzle",
-      ".next",
-      ".open-next",
-      ".sst",
+      "**/node_modules/**",
+      "**/.next/**",
+      "**/drizzle/**",
+      "**/.open-next/**",
+      "**/.sst/**",
     ],
   },
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },

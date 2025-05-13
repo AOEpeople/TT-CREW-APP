@@ -1,0 +1,16 @@
+{
+  "name": "@tt-crew/core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@libsql/client": "^0.15.4",
+    "drizzle-orm": "^0.43.1",
+    "sst": "3.14.14"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.1",
+    "typescript": "^5.3.3"
+  }
+}

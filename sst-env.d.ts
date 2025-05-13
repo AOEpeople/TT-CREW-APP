@@ -2,14 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 /* deno-fmt-ignore-file */
-import "sst"
-export {}
+
 declare module "sst" {
   export interface Resource {
-    "SENTRY_AUTH_TOKEN": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
     "TT-Nextjs": {
       "type": "sst.aws.Nextjs"
       "url": string
@@ -24,3 +19,7 @@ declare module "sst" {
     }
   }
 }
+/// <reference path="sst-env.d.ts" />
+
+import "sst"
+export {}

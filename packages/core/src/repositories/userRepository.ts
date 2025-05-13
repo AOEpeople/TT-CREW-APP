@@ -1,0 +1,19 @@
+import { schema, type TTGameDatabase } from "../db";
+
+export class UserRepository {
+  constructor(private db: TTGameDatabase) {}
+
+  async getOrCreateDefaultUser(): Promise<{ id: number; username: string }> {
+    const user = await this.db.query.users.findFirst();
+
+    if (!user) {
+      const [newUser] = await this.db
+        .insert(schema.users)
+        .values({ username: "default" })
+        .returning({ id: schema.users.id, username: schema.users.username });
+      return newUser;
+    }
+
+    return user;
+  }
+} 
